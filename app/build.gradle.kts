@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.MOBI3002.in_progress"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.MOBI3002.in_progress"
