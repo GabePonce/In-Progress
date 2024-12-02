@@ -30,11 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.MOBI3002.in_progress.classes.NavItem
 import com.MOBI3002.in_progress.ui.theme.InProgressTheme
-//import com.MOBI3002.in_progress.composables.Calendar
-//import com.MOBI3002.in_progress.composables.Login
-//import com.MOBI3002.in_progress.composables.Register
-//import com.MOBI3002.in_progress.composables.Timer
-//import com.MOBI3002.in_progress.composables.AddTask
 
 class NavBar : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,9 +53,9 @@ fun NavBarView(){
     // Tasks variables
     // List of nav items for the nav bar
     val navItemList = listOf(
-        NavItem(name = "Home", Icons.Default.List), // Tasks
-        NavItem(name = "Menu", Icons.Default.DateRange), // Calendar
-        NavItem(name = "Order", Icons.Default.PlayArrow), // Timer (No Clock)
+        NavItem(name = "Tasks", Icons.Default.List), // Tasks
+        NavItem(name = "Calendar", Icons.Default.DateRange), // Calendar
+        NavItem(name = "Timer", Icons.Default.PlayArrow), // Timer (No Clock)
     )
     // Mutable state variable to store selected screen
     var selectedOption by remember { mutableIntStateOf(value = 0) }

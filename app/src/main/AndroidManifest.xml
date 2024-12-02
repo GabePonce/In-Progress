@@ -19,9 +19,20 @@
             android:theme="@style/Theme.InProgress">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".composables.NavBar"
+            android:exported="true"
+            android:label="InProgressNav"
+            android:theme="@style/Theme.InProgress">
+        </activity>
+        <activity
+            android:name=".composables.Register"
+            android:exported="true"
+            android:label="InProgressRegister"
+            android:theme="@style/Theme.InProgress">
         </activity>
     </application>
 

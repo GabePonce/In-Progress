@@ -9,7 +9,7 @@ Purpose: Final Project
 
 import androidx.compose.ui.graphics.vector.ImageVector
 
-class NavItem {
+data class NavItem (
     val name : String, // Nav item name
     val icon : ImageVector // Nav item icon
-}
+)
