@@ -6,13 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.MOBI3002.in_progress.ui.theme.InProgressTheme
-
-//Hello
+import com.MOBI3002.in_progress.composables.LoginScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,10 +21,18 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
+                    Login(this) /// Call the login composable
                 }
             }
         }
+    }
+}
+
+// Composable for calling the login screen to be displayed when the application is opened
+@Composable
+fun Login(context : ComponentActivity){
+    InProgressTheme{
+        LoginScreen(context) // Call the login screen composable
     }
 }
 

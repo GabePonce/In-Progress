@@ -3,6 +3,7 @@ package com.MOBI3002.in_progress.composables
 
 import android.content.Intent
 import android.util.Patterns
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -48,8 +49,7 @@ import com.MOBI3002.in_progress.R
 
 
 @Composable
-fun LoginScreen() {
-
+fun LoginScreen(context : ComponentActivity) {
 
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -208,8 +208,8 @@ fun LoginScreen() {
 }
 
 
-@Preview
-@Composable
-fun Display() {
-    LoginScreen()
-}
+//@Preview
+//@Composable
+//fun Display() {
+//    LoginScreen()
+//}
