@@ -108,9 +108,9 @@ fun DesignScreen(modifier: Modifier = Modifier, selectedOption:Int){
 
 }
 
-//@Preview
-//@Composable
-//fun previewDesignScreen(){
-//    DesignScreen(selectedOption = )
-//}
+@Preview
+@Composable
+fun previewDesignScreen(){
+    NavBarView()
+}
 
