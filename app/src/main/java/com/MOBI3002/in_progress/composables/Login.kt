@@ -6,6 +6,7 @@ import android.util.Patterns
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -49,10 +50,9 @@ import com.MOBI3002.in_progress.R
 
 /*
     Authors: Samuel Cook, Kendra MacKenzie, Gabe Ponce
-    Date: October 29, 2024
-    Project: Cake Ordering App
-    Filename: RegisterActivity.kt
-    Purpose: Class that handles the registration screen.
+    Date: December 2, 2024
+    Filename: Login.kt
+    Purpose: Composable function for the login screen.
 */
 
 @Composable
@@ -80,7 +80,8 @@ fun LoginScreen(context : ComponentActivity) {
                 color = Color.White,
                 fontWeight = FontWeight.ExtraBold,
                 fontFamily = FontFamily.Default,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                lineHeight = 35.sp
             )
 
             Image(
@@ -101,75 +102,78 @@ fun LoginScreen(context : ComponentActivity) {
                     // Replace with your image id
                     painterResource(id = R.drawable.duck_logo),
                     contentScale = ContentScale.None)
+                .padding(16.dp)
         ) {
 
-                Text(
-                    text = "Login",
-                    Modifier.padding(30.dp, 10.dp, 8.dp, 0.dp),
-                    fontSize = 30.sp,
-                    color = Color(150, 150, 150),
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Default,
-                    textAlign = TextAlign.Center
-                )
+            Text(
+                text = "Login",
+                Modifier.padding(0.dp, 10.dp, 8.dp, 0.dp),
+                fontSize = 30.sp,
+                color = Color(150, 150, 150),
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Default
+            )
 
-                Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(15.dp))
 
-                TextField(
-                    modifier = Modifier.padding(30.dp, 0.dp, 8.dp, 0.dp),
-                    value = email,
-                    onValueChange = {
-                        email = it
-                        emailError =
-                            if (!Patterns.EMAIL_ADDRESS.matcher(it)
-                                    .matches()
-                            ) "Invalid email!" else ""
-                        // This checks to make sure the email follows the email format.
-                    },
-                    label = { Text("email") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-                    // This sets up the keyboard for email entry. It's nice for the user.
-                )
-                if (emailError.isNotEmpty()) Text(
-                    text = emailError,
-                    color = MaterialTheme.colorScheme.error
-                )
-                // If the user leaves the email empty, an error message will display.
+            TextField(
+                modifier = Modifier.width(400.dp)
+                    .align(Alignment.CenterHorizontally),
+                value = email,
+                onValueChange = {
+                    email = it
+                    emailError =
+                        if (!Patterns.EMAIL_ADDRESS.matcher(it)
+                                .matches()
+                        ) "Invalid email!" else ""
+                    // This checks to make sure the email follows the email format.
+                },
+                label = { Text(text="email", fontSize = 25.sp) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                // This sets up the keyboard for email entry. It's nice for the user.
+            )
+            if (emailError.isNotEmpty()) Text(
+                text = emailError,
+                color = MaterialTheme.colorScheme.error
+            )
+            // If the user leaves the email empty, an error message will display.
 
-                Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(15.dp))
 
-                // Textfield for password entry.
-                TextField(
-                    modifier = Modifier.padding(30.dp, 0.dp, 8.dp, 0.dp),
-                    value = password,
-                    onValueChange = {
-                        password = it
-                        val passwordPattern = Regex("^[a-zA-Z0-9@_]+$")
-                        // regular expression to force the user to design their password in a specific pattern.
+            // Textfield for password entry.
+            TextField(
+                modifier = Modifier.width(400.dp)
+                    .align(Alignment.CenterHorizontally),
+                value = password,
+                onValueChange = {
+                    password = it
+                    val passwordPattern = Regex("^[a-zA-Z0-9@_]+$")
+                    // regular expression to force the user to design their password in a specific pattern.
 
-                        passwordError = when {
-                            it.length < 8 -> "Password must be at least 8 characters long." // display error message if password is too short
-                            !passwordPattern.matches(it) -> "Must use only letters, numbers, @, and _" // display error message if password deviates from the rules (regex)
-                            else -> ""
-                        }
-                    },
-                    label = { Text("password") },
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-                    // arranges the keyboard for password entry.
-                )
-                if (passwordError.isNotEmpty()) Text(
-                    text = passwordError,
-                    color = MaterialTheme.colorScheme.error
-                )
-                // Display an error message if the password field is empty.
+                    passwordError = when {
+                        it.length < 8 -> "Password must be at least 8 characters long." // display error message if password is too short
+                        !passwordPattern.matches(it) -> "Must use only letters, numbers, @, and _" // display error message if password deviates from the rules (regex)
+                        else -> ""
+                    }
+                },
+                label = { Text(text="password", fontSize = 25.sp) },
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                // arranges the keyboard for password entry.
+            )
+            if (passwordError.isNotEmpty()) Text(
+                text = passwordError,
+                color = MaterialTheme.colorScheme.error
+            )
+            // Display an error message if the password field is empty.
 
+            Spacer(modifier = Modifier.height(15.dp))
 
-                Button(
-                    onClick = {
-                        val valid = emailError.isEmpty() && passwordError.isEmpty()
+            Button(
+                onClick = {
+                    val valid = emailError.isEmpty() && passwordError.isEmpty()
 
-                        if (valid) { // navigate upon the button click only if the validation test passed.
+                    if (valid) { // navigate upon the button click only if the validation test passed.
 //                    val navigate = Intent(this@RegisterActivity, LoginActivity::class.java)
 //                    navigate.putExtra("email", email)
 //                    navigate.putExtra("password", password)
@@ -180,21 +184,59 @@ fun LoginScreen(context : ComponentActivity) {
 //                    // in simulating a registration/login function.
 //
 //                    startActivity(navigate) // launch the next activity.
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
-                    modifier = Modifier.width(300.dp)
-                        .padding(30.dp, 0.dp, 8.dp, 0.dp)
-                ) {
-                    Text("Login")
-                }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
+                modifier = Modifier.width(200.dp)
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                Text(text="Login", fontSize = 30.sp)
+            }
+
+            Spacer(modifier = Modifier.height(55.dp))
+
+            Text(
+                text = "Don't have an account?",
+                Modifier.padding(0.dp, 30.dp, 8.dp, 0.dp)
+                    .align(Alignment.CenterHorizontally),
+                fontSize = 30.sp,
+                color = Color(150, 150, 150),
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Default
+            )
+
+            Spacer(modifier = Modifier.height(25.dp))
+
+            Button(
+                onClick = {
+                    val valid = emailError.isEmpty() && passwordError.isEmpty()
+
+                    if (valid) { // navigate upon the button click only if the validation test passed.
+//                    val navigate = Intent(this@RegisterActivity, LoginActivity::class.java)
+//                    navigate.putExtra("email", email)
+//                    navigate.putExtra("password", password)
+//                    // send the values of email and password the user entered to the login activity.
+//
+//                    // I chose to keep this registration system simple because this assignment is only
+//                    // a simple exercise. This is not secure, but this basic logic works for my requirements
+//                    // in simulating a registration/login function.
+//
+//                    startActivity(navigate) // launch the next activity.
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
+                modifier = Modifier.width(200.dp)
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                Text(text="Sign Up!", fontSize = 30.sp)
             }
         }
     }
+}
 
 
 //@Preview
 //@Composable
 //fun Display() {
-//    LoginScreen(context)
+//    LoginScreen()
 //}
