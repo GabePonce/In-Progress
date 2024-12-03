@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ComponentActivity
 import androidx.core.view.KeyEventDispatcher.Component
 import com.MOBI3002.in_progress.R
-import kotlin.coroutines.jvm.internal.CompletedContinuation.context
 
 /*
     Authors: Samuel Cook, Kendra MacKenzie, Gabe Ponce
