@@ -4,33 +4,34 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.MOBI3002.in_progress.classes.Task
 import com.MOBI3002.in_progress.classes.Users
 
 class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object{
         const val DATABASE_NAME = "InProgress.db"
-        const val DATABASE_VERSION = 1;
+        const val DATABASE_VERSION = 1
         //users table
-        const val USERS_TABLE = "Users";
+        const val USERS_TABLE = "Users"
             //users table column info
-            const val USER_ID = "user_id"; //int, auto increment, primary key
-            const val USER_EMAIL = "email"; //text, not null
-            const val USER_PASSWORD = "password"; //text, not null
-            const val USER_NAME = "name"; //text, not null
-        const val TASKS_TABLE = "Tasks";
+            const val USER_ID = "user_id" //int, auto increment, primary key
+            const val USER_EMAIL = "email" //text, not null
+            const val USER_PASSWORD = "password" //text, not null
+            const val USER_NAME = "name" //text, not null
+        const val TASKS_TABLE = "Tasks"
             //tasks table column info
-            const val TASKS_ID = "task_id"; //int, auto increment, primary key
-            const val TASK_DESC = "description"; //text, not null
-            const val TASK_DATE = "due_date"; //text, not null;
+            const val TASK_ID = "task_id" //int, auto increment, primary key
+            const val TASK_DESC = "description" //text, not null
+            const val TASK_DATE = "due_date" //text, not null;
     }
 
     override fun onCreate(db: SQLiteDatabase) {
         //script to create the users tables
         val sql = "CREATE TABLE $USERS_TABLE ($USER_ID INT PRIMARY KEY AUTOINCREMENT, $USER_EMAIL TEXT NOT NULL UNIQUE, $USER_NAME TEXT NOT NULL, $USER_PASSWORD TEXT NOT NULL);"
-        db.execSQL(sql);
+        db.execSQL(sql)
         //script to create the tasks table
-        val sql2 = "CREATE TABLE $TASKS_TABLE ($TASKS_ID INTEGER PRIMARY KEY AUTOINCREMENT, $USER_ID INTEGER NOT NULL, $TASK_DESC TEXT NOT NULL, $TASK_DATE TEXT, FOREIGN KEY ($USER_ID) REFERENCES $USERS_TABLE($USER_ID) ON DELETE CASCADE);"
-        db.execSQL(sql2);
+        val sql2 = "CREATE TABLE $TASKS_TABLE ($TASK_ID INTEGER PRIMARY KEY AUTOINCREMENT, $USER_ID INTEGER NOT NULL, $TASK_DESC TEXT NOT NULL, $TASK_DATE TEXT, FOREIGN KEY ($USER_ID) REFERENCES $USERS_TABLE($USER_ID) ON DELETE CASCADE);"
+        db.execSQL(sql2)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, v1: Int, v2: Int){
@@ -40,7 +41,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
     }
 
     fun insertUser(email: String, name: String, pass: String): Boolean{
-        val db = this.writableDatabase;
+        val db = this.writableDatabase
         val values = ContentValues().apply {
             put(USER_EMAIL, email)
             put(USER_NAME, name)
@@ -56,7 +57,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
         val cursor = db.rawQuery("SELECT $USER_ID, $USER_NAME, $USER_EMAIL FROM $USERS_TABLE WHERE $USER_EMAIL='$email' AND $USER_PASSWORD='$pass'", null)
 
         if (cursor != null){
-            cursor.moveToFirst();
+            cursor.moveToFirst()
             val user =  Users(
                 cursor.getInt(cursor.getColumnIndexOrThrow(USER_ID)),
                 cursor.getString(cursor.getColumnIndexOrThrow(USER_NAME)),
@@ -70,4 +71,61 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
         db.close()
         return null
     }
+
+    fun insertTask(description: String, dueDate: String?, uId: Int): Boolean{
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put(USER_ID, uId)
+            put(TASK_DESC, description)
+            put(TASK_DATE, dueDate)
+        }
+        val result = db.insert(TASKS_TABLE, null, values)
+        db.close()
+        return result != -1L
+    }
+
+    fun getTasks(uId: Int): List<Task>{
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM $TASKS_TABLE WHERE $USER_ID='$uId'", null)
+        val tasks = mutableListOf<Task>()
+        if (cursor.moveToNext()){
+            do {
+                tasks.add(
+                    Task(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(TASK_ID)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(USER_ID)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(TASK_DESC)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(TASK_DATE))
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+        return tasks
+    }
+
+
+    fun getDateTasks(uId: Int): List<Task>{
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM $TASKS_TABLE WHERE $USER_ID='$uId' AND $TASK_DATE != NULL", null)
+        val tasks = mutableListOf<Task>()
+        if (cursor.moveToNext()){
+            do {
+                tasks.add(
+                    Task(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(TASK_ID)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(USER_ID)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(TASK_DESC)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(TASK_DATE))
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+        return tasks
+    }
+
+    //add delete task
 }
