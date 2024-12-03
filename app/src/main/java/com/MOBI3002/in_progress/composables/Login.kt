@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ComponentActivity
 import androidx.core.view.KeyEventDispatcher.Component
 import com.MOBI3002.in_progress.R
+import kotlin.coroutines.jvm.internal.CompletedContinuation.context
 
 /*
     Authors: Samuel Cook, Kendra MacKenzie, Gabe Ponce
@@ -55,9 +56,8 @@ import com.MOBI3002.in_progress.R
     Purpose: Class that handles the registration screen.
 */
 
-//context:ComponentActivity
 @Composable
-fun LoginScreen() {
+fun LoginScreen(context: ComponentActivity) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -196,5 +196,5 @@ fun LoginScreen() {
 @Preview
 @Composable
 fun Display() {
-    LoginScreen()
+    LoginScreen(context)
 }
