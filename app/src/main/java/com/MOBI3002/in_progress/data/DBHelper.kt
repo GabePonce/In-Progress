@@ -27,7 +27,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
 
     override fun onCreate(db: SQLiteDatabase) {
         //script to create the users tables
-        val sql = "CREATE TABLE $USERS_TABLE ($USER_ID INT PRIMARY KEY AUTOINCREMENT, $USER_EMAIL TEXT NOT NULL UNIQUE, $USER_NAME TEXT NOT NULL, $USER_PASSWORD TEXT NOT NULL);"
+        val sql = "CREATE TABLE $USERS_TABLE ($USER_ID INTEGER PRIMARY KEY AUTOINCREMENT, $USER_EMAIL TEXT NOT NULL UNIQUE, $USER_NAME TEXT NOT NULL, $USER_PASSWORD TEXT NOT NULL);"
         db.execSQL(sql)
         //script to create the tasks table
         val sql2 = "CREATE TABLE $TASKS_TABLE ($TASK_ID INTEGER PRIMARY KEY AUTOINCREMENT, $USER_ID INTEGER NOT NULL, $TASK_DESC TEXT NOT NULL, $TASK_DATE TEXT, FOREIGN KEY ($USER_ID) REFERENCES $USERS_TABLE($USER_ID) ON DELETE CASCADE);"
@@ -54,8 +54,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
 
     fun retrieveUser(email: String, pass: String):Users?{
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT $USER_ID, $USER_NAME, $USER_EMAIL FROM $USERS_TABLE WHERE $USER_EMAIL='$email' AND $USER_PASSWORD='$pass'", null)
-
+        val cursor = db.query(USERS_TABLE, arrayOf(USER_ID, USER_NAME, USER_EMAIL), "$USER_EMAIL=? AND $USER_PASSWORD=?", arrayOf(email, pass),null,null,null,null)
         if (cursor != null){
             cursor.moveToFirst()
             val user =  Users(
@@ -67,7 +66,6 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
             db.close()
             return user
         }
-
         db.close()
         return null
     }
@@ -86,9 +84,9 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
 
     fun getTasks(uId: Int): List<Task>{
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $TASKS_TABLE WHERE $USER_ID='$uId'", null)
+        val cursor = db.query(TASKS_TABLE, null, "$USER_ID=?", arrayOf(uId.toString()), null, null, null, null)
         val tasks = mutableListOf<Task>()
-        if (cursor.moveToNext()){
+        if (cursor != null && cursor.moveToFirst()){
             do {
                 tasks.add(
                     Task(
@@ -108,16 +106,16 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
 
     fun getDateTasks(uId: Int): List<Task>{
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $TASKS_TABLE WHERE $USER_ID='$uId' AND $TASK_DATE != NULL", null)
+        val cursor = db.query(TASKS_TABLE, null, "$USER_ID=? AND $TASK_DATE IS NOT NULL", arrayOf(uId.toString()), null, null, null, null)
         val tasks = mutableListOf<Task>()
-        if (cursor.moveToNext()){
+        if (cursor != null && cursor.moveToFirst()){
             do {
                 tasks.add(
                     Task(
                         cursor.getInt(cursor.getColumnIndexOrThrow(TASK_ID)),
                         cursor.getInt(cursor.getColumnIndexOrThrow(USER_ID)),
                         cursor.getString(cursor.getColumnIndexOrThrow(TASK_DESC)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(TASK_DATE))
+                        cursor.getString(cursor.getColumnIndexOrThrow(TASK_DATE)) ?: null
                     )
                 )
             } while (cursor.moveToNext())
@@ -127,5 +125,16 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
         return tasks
     }
 
-    //add delete task
+    fun deleteTask(tId: Int):Boolean{
+        val db = this.writableDatabase
+        val result = db.delete(
+            TASKS_TABLE,
+            "$TASK_ID = ?",
+            arrayOf(tId.toString())
+        )
+
+        db.close()
+
+        return result > 0
+    }
 }
