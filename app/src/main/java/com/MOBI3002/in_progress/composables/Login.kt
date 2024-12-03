@@ -3,6 +3,7 @@ package com.MOBI3002.in_progress.composables
 
 import android.content.Intent
 import android.util.Patterns
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -43,7 +44,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ComponentActivity
 import androidx.core.view.KeyEventDispatcher.Component
 import com.MOBI3002.in_progress.R
 
@@ -56,8 +56,9 @@ import com.MOBI3002.in_progress.R
 */
 
 @Composable
-fun LoginScreen(context: ComponentActivity) {
+fun LoginScreen(context : ComponentActivity) {
 
+    var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -192,8 +193,8 @@ fun LoginScreen(context: ComponentActivity) {
     }
 
 
-@Preview
-@Composable
-fun Display() {
-    LoginScreen(context)
-}
+//@Preview
+//@Composable
+//fun Display() {
+//    LoginScreen(context)
+//}

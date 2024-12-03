@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.MOBI3002.in_progress.classes.NavItem
 import com.MOBI3002.in_progress.ui.theme.InProgressTheme
 
@@ -106,3 +107,10 @@ fun DesignScreen(modifier: Modifier = Modifier, selectedOption:Int){
     }
 
 }
+
+//@Preview
+//@Composable
+//fun previewDesignScreen(){
+//    DesignScreen(selectedOption = )
+//}
+
