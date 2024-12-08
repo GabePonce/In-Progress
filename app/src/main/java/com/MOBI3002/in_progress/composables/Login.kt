@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.KeyEventDispatcher.Component
 import com.MOBI3002.in_progress.R
+import com.MOBI3002.in_progress.classes.Users
 import com.MOBI3002.in_progress.data.DBHelper
 
 /*
@@ -59,9 +60,11 @@ import com.MOBI3002.in_progress.data.DBHelper
 @Composable
 fun LoginScreen(context : ComponentActivity) {
 
-    var dbHelper: DBHelper
+
+    var dbHelper: DBHelper = DBHelper(context)
 
     var name by remember { mutableStateOf("") }
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -174,19 +177,18 @@ fun LoginScreen(context : ComponentActivity) {
 
             Button(
                 onClick = {
-                    val valid = emailError.isEmpty() && passwordError.isEmpty()
+                    val notEmpty = (emailError.isEmpty() && passwordError.isEmpty())
 
-                    if (valid) { // navigate upon the button click only if the validation test passed.
-//                    val navigate = Intent(this@RegisterActivity, LoginActivity::class.java)
-//                    navigate.putExtra("email", email)
-//                    navigate.putExtra("password", password)
-//                    // send the values of email and password the user entered to the login activity.
-//
-//                    // I chose to keep this registration system simple because this assignment is only
-//                    // a simple exercise. This is not secure, but this basic logic works for my requirements
-//                    // in simulating a registration/login function.
-//
-//                    startActivity(navigate) // launch the next activity.
+                    if (notEmpty) { // navigate upon the button click only if the validation test passed.
+                        dbHelper.retrieveUser(email, password)
+                        if (dbHelper.retrieveUser(email, password) != null){
+                            val navigate = Intent(context, NavBar::class.java)
+                            navigate.putExtra("email", email)
+                            navigate.putExtra("password", password)
+                            context.startActivity(navigate)
+                        }else{
+                            passwordError = "account not found, email or password wrong"
+                        }
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
@@ -212,20 +214,8 @@ fun LoginScreen(context : ComponentActivity) {
 
             Button(
                 onClick = {
-                    val valid = emailError.isEmpty() && passwordError.isEmpty()
-
-                    if (valid) { // navigate upon the button click only if the validation test passed.
-//                    val navigate = Intent(this@RegisterActivity, LoginActivity::class.java)
-//                    navigate.putExtra("email", email)
-//                    navigate.putExtra("password", password)
-//                    // send the values of email and password the user entered to the login activity.
-//
-//                    // I chose to keep this registration system simple because this assignment is only
-//                    // a simple exercise. This is not secure, but this basic logic works for my requirements
-//                    // in simulating a registration/login function.
-//
-//                    startActivity(navigate) // launch the next activity.
-                    }
+                    val navigate = Intent(context, Register::class.java)
+                    context.startActivity(navigate)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
                 modifier = Modifier.width(200.dp)
@@ -236,10 +226,3 @@ fun LoginScreen(context : ComponentActivity) {
         }
     }
 }
-
-
-//@Preview
-//@Composable
-//fun Display() {
-//    LoginScreen()
-//}
