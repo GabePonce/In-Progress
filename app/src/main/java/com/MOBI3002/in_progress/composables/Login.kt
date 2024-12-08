@@ -6,10 +6,7 @@ import android.util.Patterns
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -20,10 +17,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,22 +26,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.KeyEventDispatcher.Component
 import com.MOBI3002.in_progress.R
+import com.MOBI3002.in_progress.data.DBHelper
 
 /*
     Authors: Samuel Cook, Kendra MacKenzie, Gabe Ponce
@@ -57,6 +49,9 @@ import com.MOBI3002.in_progress.R
 
 @Composable
 fun LoginScreen(context : ComponentActivity) {
+
+
+    val dbHelper = DBHelper(context)
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -121,19 +116,11 @@ fun LoginScreen(context : ComponentActivity) {
                 value = email,
                 onValueChange = {
                     email = it
-                    emailError =
-                        if (!Patterns.EMAIL_ADDRESS.matcher(it)
-                                .matches()
-                        ) "Invalid email!" else ""
-                    // This checks to make sure the email follows the email format.
+
                 },
                 label = { Text(text="email", fontSize = 25.sp) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                 // This sets up the keyboard for email entry. It's nice for the user.
-            )
-            if (emailError.isNotEmpty()) Text(
-                text = emailError,
-                color = MaterialTheme.colorScheme.error
             )
             // If the user leaves the email empty, an error message will display.
 
@@ -146,14 +133,7 @@ fun LoginScreen(context : ComponentActivity) {
                 value = password,
                 onValueChange = {
                     password = it
-                    val passwordPattern = Regex("^[a-zA-Z0-9@_]+$")
-                    // regular expression to force the user to design their password in a specific pattern.
 
-                    passwordError = when {
-                        it.length < 8 -> "Password must be at least 8 characters long." // display error message if password is too short
-                        !passwordPattern.matches(it) -> "Must use only letters, numbers, @, and _" // display error message if password deviates from the rules (regex)
-                        else -> ""
-                    }
                 },
                 label = { Text(text="password", fontSize = 25.sp) },
                 visualTransformation = PasswordVisualTransformation(),
@@ -170,20 +150,16 @@ fun LoginScreen(context : ComponentActivity) {
 
             Button(
                 onClick = {
-                    val valid = emailError.isEmpty() && passwordError.isEmpty()
 
-                    if (valid) { // navigate upon the button click only if the validation test passed.
-//                    val navigate = Intent(this@RegisterActivity, LoginActivity::class.java)
-//                    navigate.putExtra("email", email)
-//                    navigate.putExtra("password", password)
-//                    // send the values of email and password the user entered to the login activity.
-//
-//                    // I chose to keep this registration system simple because this assignment is only
-//                    // a simple exercise. This is not secure, but this basic logic works for my requirements
-//                    // in simulating a registration/login function.
-//
-//                    startActivity(navigate) // launch the next activity.
+                    if (dbHelper.retrieveUser(email, password) != null){
+                        val navigate = Intent(context, NavBar::class.java)
+                        navigate.putExtra("email", email)
+                        navigate.putExtra("password", password)
+                        context.startActivity(navigate)
+                    }else{
+                        passwordError = "account not found, email or password wrong"
                     }
+
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
                 modifier = Modifier.width(200.dp)
@@ -208,17 +184,8 @@ fun LoginScreen(context : ComponentActivity) {
 
             Button(
                 onClick = {
-                    val valid = emailError.isEmpty() && passwordError.isEmpty()
-
-                    if (valid) { // navigate upon the button click only if the validation test passed.
-//                    val navigate = Intent(this@RegisterActivity, LoginActivity::class.java)
-//                    navigate.putExtra("email", email)
-//                    navigate.putExtra("password", password)
-//                    // send the values of email and password the user entered to the login activity.
-//
-//
-//                    startActivity(navigate) // launch the next activity.
-                    }
+                    val navigate = Intent(context, Register::class.java)
+                    context.startActivity(navigate)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
                 modifier = Modifier.width(200.dp)

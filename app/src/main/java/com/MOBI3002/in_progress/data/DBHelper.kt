@@ -55,8 +55,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
     fun retrieveUser(email: String, pass: String):Users?{
         val db = this.readableDatabase
         val cursor = db.query(USERS_TABLE, arrayOf(USER_ID, USER_NAME, USER_EMAIL), "$USER_EMAIL=? AND $USER_PASSWORD=?", arrayOf(email, pass),null,null,null,null)
-        if (cursor != null){
-            cursor.moveToFirst()
+        if (cursor.moveToFirst()){
             val user =  Users(
                 cursor.getInt(cursor.getColumnIndexOrThrow(USER_ID)),
                 cursor.getString(cursor.getColumnIndexOrThrow(USER_NAME)),

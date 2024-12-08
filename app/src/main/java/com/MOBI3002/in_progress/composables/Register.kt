@@ -6,6 +6,7 @@ Filename: Register.kt
 Purpose: Final Project
  */
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
 import androidx.activity.ComponentActivity
@@ -46,7 +47,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.MOBI3002.in_progress.MainActivity
 import com.MOBI3002.in_progress.R
+import com.MOBI3002.in_progress.data.DBHelper
 import com.MOBI3002.in_progress.ui.theme.InProgressTheme
 
 class Register : ComponentActivity() {
@@ -59,7 +62,7 @@ class Register : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    RegisterScreen()
+                    RegisterScreen(this)
                 }
             }
         }
@@ -67,7 +70,9 @@ class Register : ComponentActivity() {
 }
 
 @Composable
-fun RegisterScreen(){
+fun RegisterScreen(context : ComponentActivity){
+
+    var dbHelper: DBHelper = DBHelper(context)
 
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -205,10 +210,12 @@ fun RegisterScreen(){
 
             Button(
                 onClick = {
-                    val valid = emailError.isEmpty() && passwordError.isEmpty()
+                    val checked = emailError.isEmpty() && passwordError.isEmpty()
 
-                    if (valid) {
-                        // SEND INFORMATION TO DATABASE
+                    if (checked) {
+                        dbHelper.insertUser(email, name, password)
+                        val navigate = Intent(context, MainActivity::class.java)
+                        context.startActivity(navigate)
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
