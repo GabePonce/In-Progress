@@ -16,10 +16,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -79,16 +81,12 @@ fun Tasks() {
 
         Column( // Main column for the task screen content
             Modifier
-                .fillMaxSize()
+                .fillMaxHeight(.15f)
+                .fillMaxWidth()
                 .background(Color(240, 240, 240))
-                .paint(
-                    // Replace with your image id
-                    painterResource(id = R.drawable.duck_logo),
-                    contentScale = ContentScale.None
-                )
                 .padding(16.dp)
         ) {
-            Spacer(modifier = Modifier.height(55.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
             Button(
                 onClick = {
@@ -101,37 +99,62 @@ fun Tasks() {
             ) {
                 Text(text = "Add Task", fontSize = 30.sp)
             }
+        }
 
-            Spacer(modifier = Modifier.height(55.dp))
+        LazyColumn( // Main column for the task screen content
+            Modifier
+                .fillMaxSize()
+                .background(Color(240, 240, 240))
+                .paint(
+                    // Replace with your image id
+                    painterResource(id = R.drawable.duck_logo),
+                    contentScale = ContentScale.None
+                )
+                .padding(16.dp)
+        ) {
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Box(
+                Row(
                     modifier = Modifier
-                        .border(BorderStroke(4.dp, Color(74, 170, 255)))
-                        .background(Color(210, 210, 210))
-                        .clip(RoundedCornerShape(16.dp))
+                        .fillMaxWidth()
                 ) {
-                    Text(
-                        text = "Python Assignment",
-                        fontSize = 24.sp,  // Set font size
-                        fontWeight = FontWeight.SemiBold,
+                    Box(
                         modifier = Modifier
-                            .padding(16.dp)
+                            .border(
+                                BorderStroke(4.dp, Color(74, 170, 255)),
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                            .background(
+                                Color(210, 210, 210),
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                            .fillMaxHeight(.12f) // Fill 20% column height
+                            .fillMaxWidth(.80f) // Fill column width
+                    ) {
+                        Text(
+                            text = "Python Assignment",
+                            fontSize = 22.sp,  // Set font size
+                            fontWeight = FontWeight.Normal,
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxSize()
+                        )
+                    }
+                    // Checkbox component
+                    Checkbox(
+                        checked = isChecked,
+                        onCheckedChange = { isChecked = it },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = Color(74, 170, 255),
+                            uncheckedColor = Color(210, 210, 210),
+                            checkmarkColor = Color.White
+                        ),
+                        modifier = Modifier
+                            .scale(2f)
+                            .padding(11.dp, 7.dp, 0.dp, 10.dp)
                     )
                 }
-
-
-                // Checkbox component
-                Checkbox(
-                    checked = isChecked,
-                    onCheckedChange = { isChecked = it },
-                    modifier = Modifier
-                        .scale(2f)
-                        .padding(7.dp)
-                )
             }
         }
     }
