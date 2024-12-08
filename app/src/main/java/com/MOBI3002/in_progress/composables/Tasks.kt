@@ -44,13 +44,13 @@ import androidx.compose.ui.unit.sp
 import com.MOBI3002.in_progress.R
 
 @Composable
-fun Tasks(){
+fun Tasks() {
     var addTask by remember { mutableStateOf("") }
     var isChecked by remember { mutableStateOf(false) }
 
     Column(
         Modifier
-        .fillMaxSize()
+            .fillMaxSize()
     ) {
         Column(
         ) {
@@ -108,12 +108,12 @@ fun Tasks(){
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                Box (
+                Box(
                     modifier = Modifier
                         .border(BorderStroke(4.dp, Color(74, 170, 255)))
                         .background(Color(210, 210, 210))
                         .clip(RoundedCornerShape(16.dp))
-                ){
+                ) {
                     Text(
                         text = "Python Assignment",
                         fontSize = 24.sp,  // Set font size
@@ -135,6 +135,7 @@ fun Tasks(){
             }
         }
     }
+}
 
 
 @Preview
