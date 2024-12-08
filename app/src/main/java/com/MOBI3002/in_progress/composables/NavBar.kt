@@ -26,15 +26,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.MOBI3002.in_progress.classes.NavItem
-import com.MOBI3002.in_progress.classes.Task
 import com.MOBI3002.in_progress.classes.Users
 import com.MOBI3002.in_progress.data.DBHelper
 import com.MOBI3002.in_progress.ui.theme.InProgressTheme
@@ -59,7 +56,6 @@ class NavBar : ComponentActivity() {
 
         setContent {
             InProgressTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

@@ -30,16 +30,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.MOBI3002.in_progress.R
 import kotlinx.coroutines.delay
-import kotlin.reflect.typeOf
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 
 @Composable // a basic timer that translates user input of minutes into a countdown timer in seconds
 fun Timer(){
@@ -51,7 +45,7 @@ fun Timer(){
 
     //basic timer logic with launched effect
     LaunchedEffect (key1 = timeLeft, key2 = isPaused) {
-        while (timeLeft > 0 && !isPaused) { //runs while isnt paused and time is left
+        while (timeLeft > 0 && !isPaused) { //runs while isn't paused and time is left
 
             delay(1000L)
             timeLeft-- //decreases by one second off every second
@@ -60,7 +54,7 @@ fun Timer(){
     }
 
 
-    fun resetTimer() { // used in the button to reset he timer
+    fun resetTimer() { // used in the button to reset the timer
         timeLeft = 0
         isPaused = false
     }

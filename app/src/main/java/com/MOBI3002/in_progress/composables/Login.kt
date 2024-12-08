@@ -2,7 +2,6 @@ package com.MOBI3002.in_progress.composables
 
 
 import android.content.Intent
-import android.util.Patterns
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,7 +46,7 @@ import com.MOBI3002.in_progress.data.DBHelper
     Purpose: Composable function for the login screen.
 */
 
-@Composable // intial composable called within MainActivity
+@Composable // initial composable called within MainActivity
 fun LoginScreen(context : ComponentActivity) {
 
     // db helper to allow to check for authentication

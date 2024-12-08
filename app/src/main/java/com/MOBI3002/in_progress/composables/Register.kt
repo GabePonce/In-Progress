@@ -34,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -44,7 +43,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.MOBI3002.in_progress.MainActivity
@@ -115,7 +113,6 @@ fun RegisterScreen(context : ComponentActivity){
                 .fillMaxSize()
                 .background(Color(240, 240, 240))
                 .paint(
-                    // Replace with your image id
                     painterResource(id = R.drawable.duck_logo),
                     contentScale = ContentScale.None
                 )
@@ -214,7 +211,7 @@ fun RegisterScreen(context : ComponentActivity){
                     val checked = emailError.isEmpty() && passwordError.isEmpty() && nameError.isEmpty()
 
                     if (checked) {
-                        dbHelper.insertUser(email, name, password) //insterts the user into the database
+                        dbHelper.insertUser(email, name, password) //inserts the user into the database
                         val navigate = Intent(context, MainActivity::class.java)
                         context.startActivity(navigate)
                     }
