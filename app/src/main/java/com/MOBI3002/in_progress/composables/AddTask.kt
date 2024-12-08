@@ -2,6 +2,7 @@ package com.MOBI3002.in_progress.composables
 
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
+import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -43,28 +45,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.MOBI3002.in_progress.R
+import com.MOBI3002.in_progress.classes.Users
+import com.MOBI3002.in_progress.data.DBHelper
 import java.util.Date
 import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTask() {
+fun AddTask(dbHelper: DBHelper, user: Users?) {
 
     var description by remember { mutableStateOf("") }
-
     var descriptionError by remember { mutableStateOf(" ") }
-
     val datePickerState = rememberDatePickerState(initialSelectedDateMillis = 1733862949398)
-
     var taskDate by remember { mutableStateOf("") }
-    // this needs to be a lazy column
+    var success by remember { mutableStateOf("")}
+
+    // Wrapping the entire content in a scrollable column
     Column(
         Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState()) // Make the entire column scrollable
     ) {
-        Column(
-        ) {
+        Column {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -113,33 +116,33 @@ fun AddTask() {
 
             Spacer(Modifier.height(20.dp))
 
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(text = "Set Due Date (optional)",
-                    fontSize = 20.sp,
-                    color = Color(150, 150, 150),
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Default)
+            Text(
+                text = "Set Due Date (optional)",
+                fontSize = 20.sp,
+                color = Color(150, 150, 150),
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Default
+            )
 
-                DatePicker(state = datePickerState, modifier = Modifier.padding(16.dp))
+            DatePicker(state = datePickerState, modifier = Modifier.padding(16.dp))
 
-                // Format the date to be in year month day format
-                val selectedDate = remember(datePickerState.selectedDateMillis) {
-                    datePickerState.selectedDateMillis?.let { millis ->
-                        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(millis))
-                    } ?: "No date selected"
-                }
-                taskDate = selectedDate
+            val selectedDate = remember(datePickerState.selectedDateMillis) {
+                datePickerState.selectedDateMillis?.let { millis ->
+                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(millis))
+                } ?: "No date selected"
             }
+            taskDate = selectedDate
 
-            Text(text = "Set Task Description",
+            Spacer(Modifier.height(10.dp))
+
+            Text(
+                text = "Set Task Description",
                 fontSize = 20.sp,
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 20.dp),
                 color = Color(150, 150, 150),
                 fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Default)
+                fontFamily = FontFamily.Default
+            )
 
             TextField(
                 modifier = Modifier
@@ -149,14 +152,18 @@ fun AddTask() {
                 value = description,
                 onValueChange = {
                     description = it
-                    descriptionError = if (description.isEmpty()) "Please enter your task." else ""
+                    descriptionError =
+                        if (description.isEmpty()) "Please enter your task." else ""
                 },
-                label = { Text(text="description", fontSize = 25.sp) }
+                label = { Text(text = "description", fontSize = 25.sp) }
             )
-            if (descriptionError.isNotEmpty()) Text(
-                text = descriptionError,
-                color = MaterialTheme.colorScheme.error
-            )
+
+            if (descriptionError.isNotEmpty()) {
+                Text(
+                    text = descriptionError,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
 
             Spacer(modifier = Modifier.height(15.dp))
 
@@ -165,13 +172,13 @@ fun AddTask() {
                     val valid = descriptionError.isEmpty()
 
                     if (valid) {
-                        // SEND INFORMATION TO DATABASE
-                        // SEND THIS VARIABLE FOR THE DATE -> taskDate
-                        // SEND THIS FOR THE TASK -> description
+                        if (user != null) {
+                            dbHelper.insertTask(description, taskDate, user.userId)
+                            success = "Successfully added task"
+                        }
 
-                        // Uncomment this for navigation to the task screen.
-//                        val navigate = Intent(context, NavBar::class.java)
-//                        context.startActivity(navigate)
+                    }else {
+                        success = "Something went wrong"
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
@@ -179,8 +186,10 @@ fun AddTask() {
                     .width(250.dp)
                     .align(Alignment.CenterHorizontally)
             ) {
-                Text(text="Add Task", fontSize = 25.sp)
+                Text(text = "Add Task", fontSize = 25.sp)
             }
+            Text(text = success)
+            Spacer(modifier = Modifier.height(80.dp))
         }
     }
 }
