@@ -58,7 +58,6 @@ import com.MOBI3002.in_progress.R
 @Composable
 fun LoginScreen(context : ComponentActivity) {
 
-    var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -217,9 +216,6 @@ fun LoginScreen(context : ComponentActivity) {
 //                    navigate.putExtra("password", password)
 //                    // send the values of email and password the user entered to the login activity.
 //
-//                    // I chose to keep this registration system simple because this assignment is only
-//                    // a simple exercise. This is not secure, but this basic logic works for my requirements
-//                    // in simulating a registration/login function.
 //
 //                    startActivity(navigate) // launch the next activity.
                     }
@@ -233,10 +229,3 @@ fun LoginScreen(context : ComponentActivity) {
         }
     }
 }
-
-
-//@Preview
-//@Composable
-//fun Display() {
-//    LoginScreen()
-//}
