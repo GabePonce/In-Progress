@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.KeyEventDispatcher.Component
 import com.MOBI3002.in_progress.R
+import com.MOBI3002.in_progress.data.DBHelper
 
 /*
     Authors: Samuel Cook, Kendra MacKenzie, Gabe Ponce
@@ -57,6 +58,8 @@ import com.MOBI3002.in_progress.R
 
 @Composable
 fun LoginScreen(context : ComponentActivity) {
+
+    var dbHelper: DBHelper
 
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
