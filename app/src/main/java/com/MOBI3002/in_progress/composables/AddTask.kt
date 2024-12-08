@@ -2,6 +2,7 @@ package com.MOBI3002.in_progress.composables
 
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
+import android.icu.util.TimeZone
 import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
@@ -128,7 +129,10 @@ fun AddTask(dbHelper: DBHelper, user: Users?) {
 
             val selectedDate = remember(datePickerState.selectedDateMillis) {
                 datePickerState.selectedDateMillis?.let { millis ->
-                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(millis))
+                    val adjustedMillis = millis + (24 * 60 * 60 * 1000) //adjusting for weird one day behind thing
+                    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.CANADA)
+                    sdf.timeZone = TimeZone.getDefault()
+                    sdf.format(Date(adjustedMillis))
                 } ?: "No date selected"
             }
             taskDate = selectedDate
@@ -172,8 +176,11 @@ fun AddTask(dbHelper: DBHelper, user: Users?) {
                     val valid = descriptionError.isEmpty()
 
                     if (valid) {
-                        if (user != null) {
+                        if (user != null && taskDate != "No date selected") {
                             dbHelper.insertTask(description, taskDate, user.userId)
+                            success = "Successfully added task"
+                        } else if (user != null)  {
+                            dbHelper.insertTask(description, null, user.userId)
                             success = "Successfully added task"
                         }
 

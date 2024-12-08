@@ -1,5 +1,7 @@
 package com.MOBI3002.in_progress.composables
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,221 +40,229 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.MOBI3002.in_progress.R
 import com.MOBI3002.in_progress.classes.Task
+import com.MOBI3002.in_progress.classes.Users
+import com.MOBI3002.in_progress.data.DBHelper
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Calendar(){
+fun Calendar(dbHelper: DBHelper, user: Users?){
+
+    val current = LocalDateTime.now();
+    val formattedCurrent = current.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
     // Make a list of all tasks that have due dates.
     var dueTasks by remember { mutableStateOf(mutableListOf<Task>()) }
-    while (dueTasks.size < 10) { // Change this to loop for the number of due tasks rather than six times.
-        dueTasks = (dueTasks + Task (
-            taskId = 0, // This parameter doesn't really matter
-            userId = 0, // This parameter doesn't really matter
-            taskDesc = "DESCRIPTION",
-            taskDueDate = "DUE DATE"
-        )).toMutableList()
-    }
+
 
     // Make a list of all tasks that have a due date that is within X amount of time from current day.
     var upcomingTasks by remember { mutableStateOf(mutableListOf<Task>()) }
-    while (upcomingTasks.size < 10) {
-        upcomingTasks = (upcomingTasks + Task (
-            taskId = 0, // This parameter doesn't really matter
-            userId = 0, // This parameter doesn't really matter
-            taskDesc = "DESCRIPTION",
-            taskDueDate = "UPCOMING DATE"
-        )).toMutableList()
-    }
+    var organizedUpcomingTasks by remember { mutableStateOf(mutableListOf<Task>()) }
 
-    Column(
-        Modifier
-            .fillMaxSize()
-    ) {
-        Column(
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(74, 170, 255)), // Blue background color
-            ) {
-                Text(
-                    text = "In-Progress",
-                    Modifier.padding(80.dp, 10.dp, 0.dp, 10.dp),
-                    fontSize = 35.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontFamily = FontFamily.Default,
-                    textAlign = TextAlign.Center
-                )
-                Image(
-                    modifier = Modifier
-                        .size(65.dp),
-                    painter = painterResource(id = R.drawable.duck_logo),
-                    contentDescription = "DUCK"
-                )
+
+    if (user != null) {
+        for (task in dbHelper.getDateTasks(user.userId)){
+            if (task.taskDueDate == formattedCurrent){
+                dueTasks += task
+            }else{
+                upcomingTasks += task
             }
         }
 
-        Column( // Main column for the task screen content
-            Modifier
-                .fillMaxSize()
-                .background(Color(240, 240, 240))
-                .paint(
-                    // Replace with your image id
-                    painterResource(id = R.drawable.duck_logo),
-                    contentScale = ContentScale.None
-                )
-        ) {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CANADA)
 
-            Spacer(modifier = Modifier.height(25.dp))
+        organizedUpcomingTasks += upcomingTasks.sortedBy {
+                task ->
+            task.taskDueDate?.let { dateFormat.parse(it)?.time }
+        }
 
             Column(
                 Modifier
-                    .width(400.dp)
-                    .height(300.dp)
-                    .background(Color(74, 170, 255))
+                    .fillMaxSize()
             ) {
-                Row {
-                    Image(
+                Column(
+                ) {
+                    Row(
                         modifier = Modifier
-                            .size(65.dp),
-                        painter = painterResource(id = R.drawable.duck_logo),
-                        contentDescription = "DUCK"
-                    )
-                    Text(
-                        text = "Due Tasks",
-                        Modifier
-                            .padding(10.dp),
-                        fontSize = 30.sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Default
-                    )
-
+                            .fillMaxWidth()
+                            .background(Color(74, 170, 255)), // Blue background color
+                    ) {
+                        Text(
+                            text = "In-Progress",
+                            Modifier.padding(80.dp, 10.dp, 0.dp, 10.dp),
+                            fontSize = 35.sp,
+                            color = Color.White,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontFamily = FontFamily.Default,
+                            textAlign = TextAlign.Center
+                        )
+                        Image(
+                            modifier = Modifier
+                                .size(65.dp),
+                            painter = painterResource(id = R.drawable.duck_logo),
+                            contentDescription = "DUCK"
+                        )
+                    }
                 }
 
+                Column( // Main column for the task screen content
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color(240, 240, 240))
+                        .paint(
+                            // Replace with your image id
+                            painterResource(id = R.drawable.duck_logo),
+                            contentScale = ContentScale.None
+                        )
+                ) {
 
-                LazyColumn {
-                    items(dueTasks) { task ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(5.dp)
-                        ) {
-                            Box(
+                    Spacer(modifier = Modifier.height(25.dp))
+
+                    Column(
+                        Modifier
+                            .width(400.dp)
+                            .height(300.dp)
+                            .background(Color(74, 170, 255))
+                    ) {
+                        Row {
+                            Image(
                                 modifier = Modifier
-                                    .border(
-                                        BorderStroke(4.dp, Color(74, 170, 255)),
-                                        shape = RoundedCornerShape(16.dp)
-                                    )
-                                    .background(
-                                        Color(210, 210, 210),
-                                        shape = RoundedCornerShape(16.dp)
-                                    )
-                                    .fillMaxHeight(.12f) // Fill 20% column height // Fill column width
-                                    .width(250.dp)
-                            ) {
-                                Text(
-                                    text = task.taskDesc,
-                                    fontSize = 22.sp,  // Set font size
-                                    fontWeight = FontWeight.Normal,
+                                    .size(65.dp),
+                                painter = painterResource(id = R.drawable.duck_logo),
+                                contentDescription = "DUCK"
+                            )
+                            Text(
+                                text = "Due Tasks",
+                                Modifier
+                                    .padding(10.dp),
+                                fontSize = 30.sp,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily.Default
+                            )
+
+                        }
+
+
+                        LazyColumn {
+                            items(dueTasks) { task ->
+                                Row(
                                     modifier = Modifier
-                                        .padding(16.dp)
-                                        .fillMaxSize()
-                                )
+                                        .fillMaxWidth()
+                                        .padding(5.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .border(
+                                                BorderStroke(4.dp, Color(74, 170, 255)),
+                                                shape = RoundedCornerShape(16.dp)
+                                            )
+                                            .background(
+                                                Color(210, 210, 210),
+                                                shape = RoundedCornerShape(16.dp)
+                                            )
+                                            .fillMaxHeight(.12f) // Fill 20% column height // Fill column width
+                                            .width(250.dp)
+                                    ) {
+                                        Text(
+                                            text = task.taskDesc,
+                                            fontSize = 22.sp,  // Set font size
+                                            fontWeight = FontWeight.Normal,
+                                            modifier = Modifier
+                                                .padding(16.dp)
+                                                .fillMaxSize()
+                                        )
+                                    }
+                                    task.taskDueDate?.let {
+                                        Text(text = it,
+                                            modifier = Modifier.align(Alignment.CenterVertically)
+                                                .padding(5.dp, 0.dp, 0.dp, 0.dp),
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Bold,
+                                            fontFamily = FontFamily.Default,
+                                        )
+                                    }
+                                }
                             }
-                            task.taskDueDate?.let {
-                                Text(text = it,
-                                    modifier = Modifier.align(Alignment.CenterVertically)
-                                        .padding(5.dp, 0.dp, 0.dp, 0.dp),
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                    fontFamily = FontFamily.Default,
-                                )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(40.dp))
+
+                    Column(
+                        Modifier
+                            .width(400.dp)
+                            .height(300.dp)
+                            .background(Color(74, 170, 255))
+                    ) {
+                        Row {
+                            Image(
+                                modifier = Modifier
+                                    .size(65.dp),
+                                painter = painterResource(id = R.drawable.duck_logo),
+                                contentDescription = "DUCK"
+                            )
+                            Text(
+                                text = "Upcoming Tasks",
+                                Modifier
+                                    .padding(10.dp),
+                                fontSize = 30.sp,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily.Default
+                            )
+
+                        }
+
+
+                        LazyColumn {
+                            items(organizedUpcomingTasks) { task ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(5.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .border(
+                                                BorderStroke(4.dp, Color(74, 170, 255)),
+                                                shape = RoundedCornerShape(16.dp)
+                                            )
+                                            .background(
+                                                Color(210, 210, 210),
+                                                shape = RoundedCornerShape(16.dp)
+                                            )
+                                            .fillMaxHeight(.12f) // Fill 20% column height // Fill column width
+                                            .width(250.dp)
+                                    ) {
+                                        Text(
+                                            text = task.taskDesc,
+                                            fontSize = 22.sp,  // Set font size
+                                            fontWeight = FontWeight.Normal,
+                                            modifier = Modifier
+                                                .padding(16.dp)
+                                                .fillMaxSize()
+                                        )
+                                    }
+                                    task.taskDueDate?.let {
+                                        Text(text = it,
+                                            modifier = Modifier.align(Alignment.CenterVertically)
+                                                .padding(5.dp, 0.dp, 0.dp, 0.dp),
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Bold,
+                                            fontFamily = FontFamily.Default,
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(40.dp))
-
-            Column(
-                Modifier
-                    .width(400.dp)
-                    .height(300.dp)
-                    .background(Color(74, 170, 255))
-            ) {
-                Row {
-                    Image(
-                        modifier = Modifier
-                            .size(65.dp),
-                        painter = painterResource(id = R.drawable.duck_logo),
-                        contentDescription = "DUCK"
-                    )
-                    Text(
-                        text = "Upcoming Tasks",
-                        Modifier
-                            .padding(10.dp),
-                        fontSize = 30.sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Default
-                    )
-
-                }
-
-
-                LazyColumn {
-                    items(upcomingTasks) { task ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(5.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .border(
-                                        BorderStroke(4.dp, Color(74, 170, 255)),
-                                        shape = RoundedCornerShape(16.dp)
-                                    )
-                                    .background(
-                                        Color(210, 210, 210),
-                                        shape = RoundedCornerShape(16.dp)
-                                    )
-                                    .fillMaxHeight(.12f) // Fill 20% column height // Fill column width
-                                    .width(250.dp)
-                            ) {
-                                Text(
-                                    text = task.taskDesc,
-                                    fontSize = 22.sp,  // Set font size
-                                    fontWeight = FontWeight.Normal,
-                                    modifier = Modifier
-                                        .padding(16.dp)
-                                        .fillMaxSize()
-                                )
-                            }
-                            task.taskDueDate?.let {
-                                Text(text = it,
-                                    modifier = Modifier.align(Alignment.CenterVertically)
-                                        .padding(5.dp, 0.dp, 0.dp, 0.dp),
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold,
-                                    fontFamily = FontFamily.Default,
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
-
-@Preview
-@Composable
-fun DisplayPrev() {
-    Calendar()
-}

@@ -123,7 +123,7 @@ fun DesignScreen(modifier: Modifier = Modifier, selectedOption:Int, dbHelper: DB
     when(selectedOption){
         0 -> Tasks(dbHelper, user) // Tasks screen
         1 -> AddTask(dbHelper, user)
-        2 -> Calendar() // Calendar screen
+        2 -> Calendar(dbHelper, user) // Calendar screen
         3 -> Timer() // Timer screen
     }
 

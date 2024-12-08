@@ -79,7 +79,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
         return null
     }
 
-    fun insertTask(description: String, dueDate: String, uId: Int): Boolean{
+    fun insertTask(description: String, dueDate: String?, uId: Int): Boolean{
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put(USER_ID, uId)

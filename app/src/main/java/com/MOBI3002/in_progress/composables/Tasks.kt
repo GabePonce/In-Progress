@@ -55,14 +55,11 @@ import com.MOBI3002.in_progress.data.DBHelper
 @Composable
 fun Tasks(dbHelper: DBHelper, user: Users?) {
 
-    var isChecked by remember { mutableStateOf(false) }
     var tasks = remember { mutableListOf<Task>() }
 
     if (user != null) {
         tasks += dbHelper.getTasks(user.userId)
     }
-
-
 
 
     Column(
@@ -137,8 +134,13 @@ fun Tasks(dbHelper: DBHelper, user: Users?) {
                         }
 
                         Checkbox(
-                            checked = isChecked,
-                            onCheckedChange = { isChecked = it },
+                            checked = task.isChecked.value,
+                            onCheckedChange = {
+                                task.isChecked.value = it
+                                if(task.isChecked.value){
+                                    dbHelper.deleteTask(task.taskId)
+                                }
+                                              },
                             colors = CheckboxDefaults.colors(
                                 checkedColor = Color(74, 170, 255),
                                 uncheckedColor = Color(210, 210, 210),
