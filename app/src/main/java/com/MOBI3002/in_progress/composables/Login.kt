@@ -47,12 +47,13 @@ import com.MOBI3002.in_progress.data.DBHelper
     Purpose: Composable function for the login screen.
 */
 
-@Composable
+@Composable // intial composable called within MainActivity
 fun LoginScreen(context : ComponentActivity) {
 
-
+    // db helper to allow to check for authentication
     val dbHelper = DBHelper(context)
 
+    //user inputted email and password
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -64,7 +65,7 @@ fun LoginScreen(context : ComponentActivity) {
             .background(Color(74, 170, 255))
     ) {
 
-        Column(modifier = Modifier.padding(32.dp)) {
+        Column(modifier = Modifier.padding(32.dp)) {// login/register header
 
             Text(
                 text = "Welcome to In-Progress",
@@ -92,7 +93,6 @@ fun LoginScreen(context : ComponentActivity) {
                 .fillMaxSize()
                 .background(Color(240, 240, 240))
                 .paint(
-                    // Replace with your image id
                     painterResource(id = R.drawable.duck_logo),
                     contentScale = ContentScale.None)
                 .padding(16.dp)
@@ -109,6 +109,7 @@ fun LoginScreen(context : ComponentActivity) {
 
             Spacer(modifier = Modifier.height(15.dp))
 
+            //Text field for email entry
             TextField(
                 modifier = Modifier.width(400.dp)
                     .align(Alignment.CenterHorizontally),
@@ -121,7 +122,6 @@ fun LoginScreen(context : ComponentActivity) {
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                 // This sets up the keyboard for email entry. It's nice for the user.
             )
-            // If the user leaves the email empty, an error message will display.
 
             Spacer(modifier = Modifier.height(15.dp))
 
@@ -143,19 +143,21 @@ fun LoginScreen(context : ComponentActivity) {
                 text = passwordError,
                 color = MaterialTheme.colorScheme.error
             )
-            // Display an error message if the password field is empty.
+            // Display an error message if account isn't found
 
             Spacer(modifier = Modifier.height(15.dp))
 
-            Button(
+            Button(// login button
                 onClick = {
-
+                        //authentication, not very safe, checks databse for matching email and password
                     if (dbHelper.retrieveUser(email, password) != null){
                         val navigate = Intent(context, NavBar::class.java)
+                        //navigates through intents to the navbar/tasks screen
+                        // sends the email and password to properly create the usr object in there
                         navigate.putExtra("email", email)
                         navigate.putExtra("password", password)
                         context.startActivity(navigate)
-                    }else{
+                    }else{// if the query returns null i.e it didn't find anything
                         passwordError = "account not found, email or password wrong"
                     }
 
@@ -181,8 +183,9 @@ fun LoginScreen(context : ComponentActivity) {
 
             Spacer(modifier = Modifier.height(25.dp))
 
-            Button(
+            Button(//register button
                 onClick = {
+                    //sends to the register page
                     val navigate = Intent(context, Register::class.java)
                     context.startActivity(navigate)
                 },

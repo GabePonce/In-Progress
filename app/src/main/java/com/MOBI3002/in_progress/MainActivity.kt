@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import com.MOBI3002.in_progress.ui.theme.InProgressTheme
 import com.MOBI3002.in_progress.composables.LoginScreen
 
+//Main activity that begins the app on the Login Screen
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

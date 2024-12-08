@@ -47,25 +47,30 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-
+// composable for Displaying the tasks with due dates in an organized manner
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Calendar(dbHelper: DBHelper, user: Users?){
 
+    // grabs the current date
     val current = LocalDateTime.now();
+    // formats to match the due date for tasks
     val formattedCurrent = current.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
-    // Make a list of all tasks that have due dates.
+
+    // list of all the tasks that are due today
     var dueTasks by remember { mutableStateOf(mutableListOf<Task>()) }
 
 
-    // Make a list of all tasks that have a due date that is within X amount of time from current day.
+    // list of all the tasks with a due date but not due today, organized by closest due dat first
     var upcomingTasks by remember { mutableStateOf(mutableListOf<Task>()) }
     var organizedUpcomingTasks by remember { mutableStateOf(mutableListOf<Task>()) }
 
 
     if (user != null) {
+
         for (task in dbHelper.getDateTasks(user.userId)){
+            //if the task due date is the same as the current day add to according list
             if (task.taskDueDate == formattedCurrent){
                 dueTasks += task
             }else{
@@ -73,8 +78,10 @@ fun Calendar(dbHelper: DBHelper, user: Users?){
             }
         }
 
+        //date format to be able to organize the tasks array based on task due date
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CANADA)
 
+        //organizes the array by the closest due date to current local time
         organizedUpcomingTasks += upcomingTasks.sortedBy {
                 task ->
             task.taskDueDate?.let { dateFormat.parse(it)?.time }
@@ -83,7 +90,7 @@ fun Calendar(dbHelper: DBHelper, user: Users?){
             Column(
                 Modifier
                     .fillMaxSize()
-            ) {
+            ) {// header composable bit
                 Column(
                 ) {
                     Row(
@@ -109,12 +116,11 @@ fun Calendar(dbHelper: DBHelper, user: Users?){
                     }
                 }
 
-                Column( // Main column for the task screen content
+                Column( // Main column for the calendar task screen content
                     Modifier
                         .fillMaxSize()
                         .background(Color(240, 240, 240))
                         .paint(
-                            // Replace with your image id
                             painterResource(id = R.drawable.duck_logo),
                             contentScale = ContentScale.None
                         )
@@ -122,7 +128,7 @@ fun Calendar(dbHelper: DBHelper, user: Users?){
 
                     Spacer(modifier = Modifier.height(25.dp))
 
-                    Column(
+                    Column( // Due Tasks section header
                         Modifier
                             .width(400.dp)
                             .height(300.dp)
@@ -147,9 +153,8 @@ fun Calendar(dbHelper: DBHelper, user: Users?){
 
                         }
 
-
-                        LazyColumn {
-                            items(dueTasks) { task ->
+                        LazyColumn {//Lazy Column that holds the composable parts for displaying the tasks due on the current day
+                            items(dueTasks) { task -> //creates for each task in the list
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -165,19 +170,19 @@ fun Calendar(dbHelper: DBHelper, user: Users?){
                                                 Color(210, 210, 210),
                                                 shape = RoundedCornerShape(16.dp)
                                             )
-                                            .fillMaxHeight(.12f) // Fill 20% column height // Fill column width
+                                            .fillMaxHeight(.12f)
                                             .width(250.dp)
                                     ) {
-                                        Text(
+                                        Text( // displays task description
                                             text = task.taskDesc,
-                                            fontSize = 22.sp,  // Set font size
+                                            fontSize = 22.sp,
                                             fontWeight = FontWeight.Normal,
                                             modifier = Modifier
                                                 .padding(16.dp)
                                                 .fillMaxSize()
                                         )
                                     }
-                                    task.taskDueDate?.let {
+                                    task.taskDueDate?.let {// displays the task due date at the right edge of the row
                                         Text(text = it,
                                             modifier = Modifier.align(Alignment.CenterVertically)
                                                 .padding(5.dp, 0.dp, 0.dp, 0.dp),
@@ -193,7 +198,7 @@ fun Calendar(dbHelper: DBHelper, user: Users?){
 
                     Spacer(modifier = Modifier.height(40.dp))
 
-                    Column(
+                    Column( // Upcoming Tasks section header
                         Modifier
                             .width(400.dp)
                             .height(300.dp)
@@ -218,8 +223,7 @@ fun Calendar(dbHelper: DBHelper, user: Users?){
 
                         }
 
-
-                        LazyColumn {
+                        LazyColumn {//Lazy Column that holds the composable parts for displaying the upcoming tasks
                             items(organizedUpcomingTasks) { task ->
                                 Row(
                                     modifier = Modifier
@@ -236,19 +240,19 @@ fun Calendar(dbHelper: DBHelper, user: Users?){
                                                 Color(210, 210, 210),
                                                 shape = RoundedCornerShape(16.dp)
                                             )
-                                            .fillMaxHeight(.12f) // Fill 20% column height // Fill column width
+                                            .fillMaxHeight(.12f)
                                             .width(250.dp)
                                     ) {
                                         Text(
-                                            text = task.taskDesc,
-                                            fontSize = 22.sp,  // Set font size
+                                            text = task.taskDesc, //displays task description
+                                            fontSize = 22.sp,
                                             fontWeight = FontWeight.Normal,
                                             modifier = Modifier
                                                 .padding(16.dp)
                                                 .fillMaxSize()
                                         )
                                     }
-                                    task.taskDueDate?.let {
+                                    task.taskDueDate?.let {// displays the task due date at the right edge of the row
                                         Text(text = it,
                                             modifier = Modifier.align(Alignment.CenterVertically)
                                                 .padding(5.dp, 0.dp, 0.dp, 0.dp),

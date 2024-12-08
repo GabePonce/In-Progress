@@ -57,7 +57,6 @@ class Register : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             InProgressTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -69,10 +68,10 @@ class Register : ComponentActivity() {
     }
 }
 
-@Composable
+@Composable // register composable
 fun RegisterScreen(context : ComponentActivity){
 
-    var dbHelper: DBHelper = DBHelper(context)
+    var dbHelper: DBHelper = DBHelper(context) // to add the new user to the database
 
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -88,7 +87,7 @@ fun RegisterScreen(context : ComponentActivity){
             .background(Color(74, 170, 255))
     ) {
 
-        Column(modifier = Modifier.padding(32.dp)) {
+        Column(modifier = Modifier.padding(32.dp)) { // login/register header
 
             Text(
                 text = "Welcome to In-Progress",
@@ -134,6 +133,7 @@ fun RegisterScreen(context : ComponentActivity){
 
             Spacer(modifier = Modifier.height(15.dp))
 
+            // name user input
             TextField(
                 modifier = Modifier
                     .width(400.dp)
@@ -149,10 +149,11 @@ fun RegisterScreen(context : ComponentActivity){
                 text = nameError,
                 color = MaterialTheme.colorScheme.error
             )
-            // If the user leaves the email empty, an error message will display.
+            // If the user leaves the name empty, an error message will display.
 
             Spacer(modifier = Modifier.height(15.dp))
 
+            // email user input
             TextField(
                 modifier = Modifier
                     .width(400.dp)
@@ -178,7 +179,7 @@ fun RegisterScreen(context : ComponentActivity){
 
             Spacer(modifier = Modifier.height(15.dp))
 
-            // Textfield for password entry.
+            // password user input.
             TextField(
                 modifier = Modifier
                     .width(400.dp)
@@ -189,7 +190,7 @@ fun RegisterScreen(context : ComponentActivity){
                     val passwordPattern = Regex("^[a-zA-Z0-9@_]+$")
                     // regular expression to force the user to design their password in a specific pattern.
 
-                    passwordError = when {
+                    passwordError = when {// error messages according to the regex and length
                         it.length < 8 -> "Password must be at least 8 characters long." // display error message if password is too short
                         !passwordPattern.matches(it) -> "Must use only letters, numbers, @, and _" // display error message if password deviates from the rules (regex)
                         else -> ""
@@ -208,12 +209,12 @@ fun RegisterScreen(context : ComponentActivity){
 
             Spacer(modifier = Modifier.height(15.dp))
 
-            Button(
+            Button( //register button
                 onClick = {
-                    val checked = emailError.isEmpty() && passwordError.isEmpty()
+                    val checked = emailError.isEmpty() && passwordError.isEmpty() && nameError.isEmpty()
 
                     if (checked) {
-                        dbHelper.insertUser(email, name, password)
+                        dbHelper.insertUser(email, name, password) //insterts the user into the database
                         val navigate = Intent(context, MainActivity::class.java)
                         context.startActivity(navigate)
                     }

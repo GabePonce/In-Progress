@@ -51,13 +51,15 @@ import com.MOBI3002.in_progress.classes.Task
 import com.MOBI3002.in_progress.classes.Users
 import com.MOBI3002.in_progress.data.DBHelper
 
-
+//composable for the landing screen after loging in
+//here is where all task are displayed and can be marked of
 @Composable
 fun Tasks(dbHelper: DBHelper, user: Users?) {
-
+    // this variable will hold all of the tasks
     var tasks = remember { mutableListOf<Task>() }
 
     if (user != null) {
+        //passes all of the tasks a user has to the list
         tasks += dbHelper.getTasks(user.userId)
     }
 
@@ -66,8 +68,8 @@ fun Tasks(dbHelper: DBHelper, user: Users?) {
         Modifier
             .fillMaxSize()
     ) {
-        Column(
-        ) {
+        Column{
+            //header section of the composable
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -91,12 +93,12 @@ fun Tasks(dbHelper: DBHelper, user: Users?) {
             }
         }
 
+        //scrollable lazy column that displays all the tasks
         LazyColumn( // Main column for the task screen content
             Modifier
                 .fillMaxSize()
                 .background(Color(240, 240, 240))
                 .paint(
-                    // Replace with your image id
                     painterResource(id = R.drawable.duck_logo),
                     contentScale = ContentScale.None
                 )
@@ -120,12 +122,12 @@ fun Tasks(dbHelper: DBHelper, user: Users?) {
                                     Color(210, 210, 210),
                                     shape = RoundedCornerShape(16.dp)
                                 )
-                                .fillMaxHeight(.12f) // Fill 20% column height
-                                .fillMaxWidth(.80f) // Fill column width
+                                .fillMaxHeight(.12f)
+                                .fillMaxWidth(.80f)
                         ) {
-                            Text(
+                            Text( //displays task description
                                 text = task.taskDesc,
-                                fontSize = 22.sp,  // Set font size
+                                fontSize = 22.sp,
                                 fontWeight = FontWeight.Normal,
                                 modifier = Modifier
                                     .padding(16.dp)
@@ -133,15 +135,17 @@ fun Tasks(dbHelper: DBHelper, user: Users?) {
                             )
                         }
 
-                        Checkbox(
+                        Checkbox( //this checkbox holds the logic to delete a task if it is checked
+                            // each individual task has a boolean is checked so that the delete
+                            // works properly
                             checked = task.isChecked.value,
                             onCheckedChange = {
-                                task.isChecked.value = it
-                                if(task.isChecked.value){
-                                    dbHelper.deleteTask(task.taskId)
+                                task.isChecked.value = it // assigns checked
+                                if(task.isChecked.value){ // if checked is true
+                                    dbHelper.deleteTask(task.taskId)// runs the delete task function removing the task from the database
                                 }
                                               },
-                            colors = CheckboxDefaults.colors(
+                            colors = CheckboxDefaults.colors( // check box colors
                                 checkedColor = Color(74, 170, 255),
                                 uncheckedColor = Color(210, 210, 210),
                                 checkmarkColor = Color.White

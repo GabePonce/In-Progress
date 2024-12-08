@@ -41,35 +41,35 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 
-@Composable
+@Composable // a basic timer that translates user input of minutes into a countdown timer in seconds
 fun Timer(){
-    var timeLeft by remember { mutableStateOf(0) }
-    var timerMinutes by remember { mutableStateOf("")}
-    var isPaused by remember { mutableStateOf(true) }
+
+    var timeLeft by remember { mutableStateOf(0) } //how much time is left on the timer
+    var timerMinutes by remember { mutableStateOf("")} //user input on how many minutes they want the timer to be
+    var isPaused by remember { mutableStateOf(true) } //to pause/unpause the timer
     var errorMessage by remember { mutableStateOf("")}
 
+    //basic timer logic with launched effect
     LaunchedEffect (key1 = timeLeft, key2 = isPaused) {
-        while (timeLeft > 0 && !isPaused) {
+        while (timeLeft > 0 && !isPaused) { //runs while isnt paused and time is left
 
             delay(1000L)
-            timeLeft--
+            timeLeft-- //decreases by one second off every second
 
         }
     }
 
 
-
-    fun resetTimer() {
+    fun resetTimer() { // used in the button to reset he timer
         timeLeft = 0
         isPaused = false
     }
 
-    Column (
+    Column (// actually displaying the timer
         modifier = Modifier.fillMaxSize()
     ){
-        Column(
-        ) {
-            Row(
+        Column{
+            Row( //header file
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color(74, 170, 255)), // Blue background color
@@ -104,7 +104,7 @@ fun Timer(){
             horizontalAlignment = Alignment.CenterHorizontally
 
         ){
-            TextField(
+            TextField( //user input for the amount of minutes to put in
                 value = timerMinutes,
                 onValueChange = {
                     timerMinutes = it
@@ -120,9 +120,11 @@ fun Timer(){
                 label = { Text(text = errorMessage)}
             )
 
-            Text(text = if (timeLeft == 0) "|--:--|" else "$timeLeft Sec", fontSize = 40.sp)
+            Text(text = if (timeLeft == 0) "|--:--|" else "$timeLeft Sec", fontSize = 40.sp) //time left display
+
             Spacer(modifier = Modifier.height(15.dp))
-            Button(
+
+            Button( //pause button
                 onClick = { isPaused = !isPaused },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
                 modifier = Modifier
@@ -134,7 +136,7 @@ fun Timer(){
 
             Spacer(modifier = Modifier.height(15.dp))
 
-            Button(
+            Button( //reset button
                 onClick = { resetTimer() },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
                 modifier = Modifier
@@ -145,10 +147,4 @@ fun Timer(){
             }
         }
     }
-}
-
-@Composable
-@Preview
-fun checkTimer(){
-    Timer()
 }

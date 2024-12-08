@@ -6,9 +6,11 @@ Filename: Tasks.kt
 Purpose: Final Project
  */
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -37,17 +39,22 @@ import com.MOBI3002.in_progress.classes.Users
 import com.MOBI3002.in_progress.data.DBHelper
 import com.MOBI3002.in_progress.ui.theme.InProgressTheme
 
-class NavBar : ComponentActivity() {
-    private lateinit var dbHelper: DBHelper
 
+//The navbar activity which allows the user to go between composable screens
+class NavBar : ComponentActivity() {
+    private lateinit var dbHelper: DBHelper // dbhelper to pass into the sub composables
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         dbHelper = DBHelper(this)
 
+        //user name and passwords passed from the login screen to create a user object
         val email = intent.getStringExtra("email").toString()
         val pass = intent.getStringExtra("password").toString()
 
+        //creates user object from the retrieve user function
         val user = dbHelper.retrieveUser(email, pass)
 
         setContent {
@@ -64,9 +71,9 @@ class NavBar : ComponentActivity() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavBarView(dbHelper: DBHelper, user: Users?){
-    // Tasks variables
     // List of nav items for the nav bar
     val navItemList = listOf(
         NavItem(name = "Tasks", Icons.Default.List), // Tasks
@@ -109,6 +116,7 @@ fun NavBarView(dbHelper: DBHelper, user: Users?){
         DesignScreen(
             modifier = Modifier
                 .padding(innerPadding),selectedOption,
+            //passing dbHelper and user here to pass them into the screens/composables that will be called
             dbHelper,
             user
             )
@@ -117,12 +125,13 @@ fun NavBarView(dbHelper: DBHelper, user: Users?){
 
 
 // Design screen composable
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DesignScreen(modifier: Modifier = Modifier, selectedOption:Int, dbHelper: DBHelper, user: Users?){
     // Call required screen based on user selection
     when(selectedOption){
         0 -> Tasks(dbHelper, user) // Tasks screen
-        1 -> AddTask(dbHelper, user)
+        1 -> AddTask(dbHelper, user) // Add new task screen
         2 -> Calendar(dbHelper, user) // Calendar screen
         3 -> Timer() // Timer screen
     }

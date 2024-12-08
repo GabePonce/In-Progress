@@ -34,12 +34,15 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
         db.execSQL(sql2)
     }
 
+    //function to drop and update the table schema if necessary
     override fun onUpgrade(db: SQLiteDatabase, v1: Int, v2: Int){
         db.execSQL("DROP TABLE $TASKS_TABLE")
         db.execSQL("DROP TABLE $USERS_TABLE")
         onCreate(db)
     }
 
+    //function to insert a user into the database
+    //used after authenticating
     fun insertUser(email: String, name: String, pass: String): Boolean{
         val db = this.writableDatabase
         val values = ContentValues().apply {
@@ -52,8 +55,11 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
         return result != -1L
     }
 
+    //used for creating a user object to utilize the user Id mainly
     fun retrieveUser(email: String, pass: String):Users?{
         val db = this.readableDatabase
+            //retrieves where the username and password match nad since user email
+            //is unique it will only ever find one if one exists
             val cursor = db.query(
                 USERS_TABLE,
                 arrayOf(USER_ID, USER_NAME, USER_EMAIL),
@@ -74,11 +80,13 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
                 db.close()
                 return user
             }
-
+        //can be used for authentication because if something isn't found it returns null
         db.close()
         return null
     }
 
+    //used to insert a newly created task, dueDate can be null to allow for tasks
+    // that don't have a due date
     fun insertTask(description: String, dueDate: String?, uId: Int): Boolean{
         val db = this.writableDatabase
         val values = ContentValues().apply {
@@ -88,9 +96,11 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
         }
         val result = db.insert(TASKS_TABLE, null, values)
         db.close()
+        //returns true if successfully inserts new task to the database
         return result != -1L
     }
 
+    //retrieves all of one users tasks, used in the Tasks composable to display all the tasks
     fun getTasks(uId: Int): List<Task>{
         val db = this.readableDatabase
         val cursor = db.query(TASKS_TABLE, null, "$USER_ID=?", arrayOf(uId.toString()), null, null, null, null)
@@ -113,6 +123,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
     }
 
 
+    //get the tasks that specfically have a due date, used in the calendar section
     fun getDateTasks(uId: Int): List<Task>{
         val db = this.readableDatabase
         val cursor = db.query(TASKS_TABLE, null, "$USER_ID=? AND $TASK_DATE IS NOT NULL", arrayOf(uId.toString()), null, null, null, null)
@@ -134,6 +145,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
         return tasks
     }
 
+    //removes a task based on taskID, used when "completing a task"
     fun deleteTask(tId: Int):Boolean{
         val db = this.writableDatabase
         val result = db.delete(
