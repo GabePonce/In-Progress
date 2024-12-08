@@ -58,7 +58,6 @@ import com.MOBI3002.in_progress.R
 @Composable
 fun LoginScreen(context : ComponentActivity) {
 
-    var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -233,10 +232,3 @@ fun LoginScreen(context : ComponentActivity) {
         }
     }
 }
-
-
-//@Preview
-//@Composable
-//fun Display() {
-//    LoginScreen()
-//}
