@@ -49,7 +49,7 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTask(context : ComponentActivity) {
+fun AddTask() {
 
     var description by remember { mutableStateOf("") }
 
@@ -58,7 +58,7 @@ fun AddTask(context : ComponentActivity) {
     val datePickerState = rememberDatePickerState(initialSelectedDateMillis = 1733862949398)
 
     var taskDate by remember { mutableStateOf("") }
-
+    // this needs to be a lazy column
     Column(
         Modifier
             .fillMaxSize()
@@ -181,30 +181,6 @@ fun AddTask(context : ComponentActivity) {
             ) {
                 Text(text="Add Task", fontSize = 25.sp)
             }
-
-            Spacer(modifier = Modifier.height(30.dp))
-
-            Button(
-                onClick = {
-                    // I think this should work.
-                    val navigate = Intent(context, NavBar::class.java)
-                    context.startActivity(navigate)
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
-                modifier = Modifier
-                    .width(250.dp)
-                    .align(Alignment.CenterHorizontally)
-            ) {
-                Text(text="Return to Tasks", fontSize = 25.sp)
-            }
         }
     }
 }
-
-
-
-//@Preview
-//@Composable
-//fun DisplayTaskScreen() {
-//    AddTask()
-//}

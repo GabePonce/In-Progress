@@ -54,22 +54,32 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null,
 
     fun retrieveUser(email: String, pass: String):Users?{
         val db = this.readableDatabase
-        val cursor = db.query(USERS_TABLE, arrayOf(USER_ID, USER_NAME, USER_EMAIL), "$USER_EMAIL=? AND $USER_PASSWORD=?", arrayOf(email, pass),null,null,null,null)
-        if (cursor.moveToFirst()){
-            val user =  Users(
-                cursor.getInt(cursor.getColumnIndexOrThrow(USER_ID)),
-                cursor.getString(cursor.getColumnIndexOrThrow(USER_NAME)),
-                cursor.getString(cursor.getColumnIndexOrThrow(USER_EMAIL))
+            val cursor = db.query(
+                USERS_TABLE,
+                arrayOf(USER_ID, USER_NAME, USER_EMAIL),
+                "$USER_EMAIL=? AND $USER_PASSWORD=?",
+                arrayOf(email, pass),
+                null,
+                null,
+                null,
+                null
             )
-            cursor.close()
-            db.close()
-            return user
-        }
+            if (cursor.moveToFirst()) {
+                val user = Users(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(USER_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(USER_NAME)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(USER_EMAIL))
+                )
+                cursor.close()
+                db.close()
+                return user
+            }
+
         db.close()
         return null
     }
 
-    fun insertTask(description: String, dueDate: String?, uId: Int): Boolean{
+    fun insertTask(description: String, dueDate: String, uId: Int): Boolean{
         val db = this.writableDatabase
         val values = ContentValues().apply {
             put(USER_ID, uId)

@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Login(this) /// Call the login composable
+                    Login(this@MainActivity) /// Call the login composable
                 }
             }
         }

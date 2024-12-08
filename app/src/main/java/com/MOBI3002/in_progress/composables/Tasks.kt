@@ -1,5 +1,7 @@
 package com.MOBI3002.in_progress.composables
 
+import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,12 +45,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ComponentActivity
 import com.MOBI3002.in_progress.R
+import com.MOBI3002.in_progress.classes.Task
+import com.MOBI3002.in_progress.classes.Users
+import com.MOBI3002.in_progress.data.DBHelper
+
 
 @Composable
-fun Tasks() {
-    var addTask by remember { mutableStateOf("") }
+fun Tasks(dbHelper: DBHelper, user: Users?) {
+
     var isChecked by remember { mutableStateOf(false) }
+    var tasks = remember { mutableListOf<Task>() }
+
+    if (user != null) {
+        tasks += dbHelper.getTasks(user.userId)
+    }
+
+
+
 
     Column(
         Modifier
@@ -79,28 +94,6 @@ fun Tasks() {
             }
         }
 
-        Column( // Main column for the task screen content
-            Modifier
-                .fillMaxHeight(.15f)
-                .fillMaxWidth()
-                .background(Color(240, 240, 240))
-                .padding(16.dp)
-        ) {
-            Spacer(modifier = Modifier.height(30.dp))
-
-            Button(
-                onClick = {
-                    // Code to be added for adding a task
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
-                modifier = Modifier
-                    .width(200.dp)
-                    .align(Alignment.CenterHorizontally)
-            ) {
-                Text(text = "Add Task", fontSize = 30.sp)
-            }
-        }
-
         LazyColumn( // Main column for the task screen content
             Modifier
                 .fillMaxSize()
@@ -115,54 +108,50 @@ fun Tasks() {
             item {
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Box(
+                for (task in tasks) {
+                    Row(
                         modifier = Modifier
-                            .border(
-                                BorderStroke(4.dp, Color(74, 170, 255)),
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                            .background(
-                                Color(210, 210, 210),
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                            .fillMaxHeight(.12f) // Fill 20% column height
-                            .fillMaxWidth(.80f) // Fill column width
+                            .fillMaxWidth()
                     ) {
-                        Text(
-                            text = "Python Assignment",
-                            fontSize = 22.sp,  // Set font size
-                            fontWeight = FontWeight.Normal,
+                        Box(
                             modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxSize()
+                                .border(
+                                    BorderStroke(4.dp, Color(74, 170, 255)),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .background(
+                                    Color(210, 210, 210),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .fillMaxHeight(.12f) // Fill 20% column height
+                                .fillMaxWidth(.80f) // Fill column width
+                        ) {
+                            Text(
+                                text = task.taskDesc,
+                                fontSize = 22.sp,  // Set font size
+                                fontWeight = FontWeight.Normal,
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize()
+                            )
+                        }
+
+                        Checkbox(
+                            checked = isChecked,
+                            onCheckedChange = { isChecked = it },
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = Color(74, 170, 255),
+                                uncheckedColor = Color(210, 210, 210),
+                                checkmarkColor = Color.White
+                            ),
+                            modifier = Modifier
+                                .scale(2f)
+                                .padding(11.dp, 7.dp, 0.dp, 10.dp)
                         )
                     }
-                    // Checkbox component
-                    Checkbox(
-                        checked = isChecked,
-                        onCheckedChange = { isChecked = it },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = Color(74, 170, 255),
-                            uncheckedColor = Color(210, 210, 210),
-                            checkmarkColor = Color.White
-                        ),
-                        modifier = Modifier
-                            .scale(2f)
-                            .padding(11.dp, 7.dp, 0.dp, 10.dp)
-                    )
                 }
             }
         }
     }
 }
 
-
-@Preview
-@Composable
-fun Display() {
-    Tasks()
-}
