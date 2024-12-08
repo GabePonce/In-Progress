@@ -1,6 +1,8 @@
 package com.MOBI3002.in_progress.composables
 
-import android.util.Patterns
+import android.content.Intent
+import android.icu.text.SimpleDateFormat
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,27 +38,26 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.MOBI3002.in_progress.R
+import java.util.Date
+import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTask() {
+fun AddTask(context : ComponentActivity) {
 
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
 
-    var nameError by remember { mutableStateOf(" ") }
-    var emailError by remember { mutableStateOf(" ") }
-    var passwordError by remember { mutableStateOf(" ") }
+    var descriptionError by remember { mutableStateOf(" ") }
+
     val datePickerState = rememberDatePickerState(initialSelectedDateMillis = 1733862949398)
+
+    var taskDate by remember { mutableStateOf("") }
 
     Column(
         Modifier
@@ -100,114 +100,102 @@ fun AddTask() {
                 .padding(16.dp)
         ) {
 
-
-
             Text(
-                text = "Sign Up",
-                Modifier.padding(0.dp, 10.dp, 8.dp, 0.dp),
+                text = "Add New Task",
+                Modifier
+                    .padding(0.dp, 10.dp, 8.dp, 0.dp)
+                    .align(Alignment.CenterHorizontally),
                 fontSize = 30.sp,
                 color = Color(150, 150, 150),
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Default
             )
 
+            Spacer(Modifier.height(20.dp))
 
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Pre-select a date for December 10, 2024
-                var currentDate = datePickerState
-                DatePicker(state = currentDate, modifier = Modifier.padding(16.dp))
-                Text(text = "$currentDate")
+                Text(text = "Set Due Date (optional)",
+                    fontSize = 20.sp,
+                    color = Color(150, 150, 150),
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Default)
+
+                DatePicker(state = datePickerState, modifier = Modifier.padding(16.dp))
+
+                // Format the date to be in year month day format
+                val selectedDate = remember(datePickerState.selectedDateMillis) {
+                    datePickerState.selectedDateMillis?.let { millis ->
+                        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(millis))
+                    } ?: "No date selected"
+                }
+                taskDate = selectedDate
             }
 
+            Text(text = "Set Task Description",
+                fontSize = 20.sp,
+                modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 20.dp),
+                color = Color(150, 150, 150),
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Default)
 
             TextField(
                 modifier = Modifier
                     .width(400.dp)
+                    .height(150.dp)
                     .align(Alignment.CenterHorizontally),
-                value = name,
+                value = description,
                 onValueChange = {
-                    name = it
-                    nameError = if (name.isEmpty()) "Please enter your name." else ""
+                    description = it
+                    descriptionError = if (description.isEmpty()) "Please enter your task." else ""
                 },
-                label = { Text(text="name", fontSize = 25.sp) }
+                label = { Text(text="description", fontSize = 25.sp) }
             )
-            if (nameError.isNotEmpty()) Text(
-                text = nameError,
+            if (descriptionError.isNotEmpty()) Text(
+                text = descriptionError,
                 color = MaterialTheme.colorScheme.error
             )
-
-            TextField(
-                modifier = Modifier
-                    .width(400.dp)
-                    .align(Alignment.CenterHorizontally),
-                value = email,
-                onValueChange = {
-                    email = it
-                    emailError =
-                        if (!Patterns.EMAIL_ADDRESS.matcher(it)
-                                .matches()
-                        ) "Invalid email!" else ""
-                    // This checks to make sure the email follows the email format.
-                },
-                label = { Text(text="email", fontSize = 25.sp) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-                // This sets up the keyboard for email entry. It's nice for the user.
-            )
-            if (emailError.isNotEmpty()) Text(
-                text = emailError,
-                color = MaterialTheme.colorScheme.error
-            )
-            // If the user leaves the email empty, an error message will display.
-
-            Spacer(modifier = Modifier.height(15.dp))
-
-            // Textfield for password entry.
-            TextField(
-                modifier = Modifier
-                    .width(400.dp)
-                    .align(Alignment.CenterHorizontally),
-                value = password,
-                onValueChange = {
-                    password = it
-                    val passwordPattern = Regex("^[a-zA-Z0-9@_]+$")
-                    // regular expression to force the user to design their password in a specific pattern.
-
-                    passwordError = when {
-                        it.length < 8 -> "Password must be at least 8 characters long." // display error message if password is too short
-                        !passwordPattern.matches(it) -> "Must use only letters, numbers, @, and _" // display error message if password deviates from the rules (regex)
-                        else -> ""
-                    }
-                },
-                label = { Text(text="password", fontSize = 25.sp) },
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-                // arranges the keyboard for password entry.
-            )
-            if (passwordError.isNotEmpty()) Text(
-                text = passwordError,
-                color = MaterialTheme.colorScheme.error
-            )
-            // Display an error message if the password field is empty.
 
             Spacer(modifier = Modifier.height(15.dp))
 
             Button(
                 onClick = {
-                    val valid = emailError.isEmpty() && passwordError.isEmpty()
+                    val valid = descriptionError.isEmpty()
 
                     if (valid) {
                         // SEND INFORMATION TO DATABASE
+                        // SEND THIS VARIABLE FOR THE DATE -> taskDate
+                        // SEND THIS FOR THE TASK -> description
+
+                        // Uncomment this for navigation to the task screen.
+//                        val navigate = Intent(context, NavBar::class.java)
+//                        context.startActivity(navigate)
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
                 modifier = Modifier
-                    .width(200.dp)
+                    .width(250.dp)
                     .align(Alignment.CenterHorizontally)
             ) {
-                Text(text="Sign Up", fontSize = 30.sp)
+                Text(text="Add Task", fontSize = 25.sp)
+            }
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Button(
+                onClick = {
+                    // I think this should work.
+                    val navigate = Intent(context, NavBar::class.java)
+                    context.startActivity(navigate)
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
+                modifier = Modifier
+                    .width(250.dp)
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                Text(text="Return to Tasks", fontSize = 25.sp)
             }
         }
     }
@@ -215,8 +203,8 @@ fun AddTask() {
 
 
 
-@Preview
-@Composable
-fun DisplayTaskScreen() {
-    AddTask()
-}
+//@Preview
+//@Composable
+//fun DisplayTaskScreen() {
+//    AddTask()
+//}
