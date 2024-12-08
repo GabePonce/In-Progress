@@ -140,8 +140,8 @@ fun RegisterScreen(){
                 },
                 label = { Text(text="name", fontSize = 25.sp) }
             )
-            if (emailError.isNotEmpty()) Text(
-                text = emailError,
+            if (nameError.isNotEmpty()) Text(
+                text = nameError,
                 color = MaterialTheme.colorScheme.error
             )
             // If the user leaves the email empty, an error message will display.
@@ -201,8 +201,8 @@ fun RegisterScreen(){
             )
             // Display an error message if the password field is empty.
 
+            Spacer(modifier = Modifier.height(15.dp))
 
-            // Button for
             Button(
                 onClick = {
                     val valid = emailError.isEmpty() && passwordError.isEmpty()
@@ -218,43 +218,6 @@ fun RegisterScreen(){
             ) {
                 Text(text="Sign Up", fontSize = 30.sp)
             }
-
-            Spacer(modifier = Modifier.height(25.dp))
-
-            Text(
-                text = "Back to Login",
-                Modifier.padding(0.dp, 10.dp, 8.dp, 0.dp),
-                fontSize = 30.sp,
-                color = Color(150, 150, 150),
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Default
-            )
-
-            Spacer(modifier = Modifier.height(25.dp))
-
-            Button(
-                onClick = {
-                    val valid = emailError.isEmpty() && passwordError.isEmpty()
-
-                    if (valid) { // navigate upon the button click only if the validation test passed.
-                        // GO TO LOGIN PAGE
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
-                modifier = Modifier
-                    .width(200.dp)
-                    .align(Alignment.CenterHorizontally)
-            ) {
-                Text(text="Login", fontSize = 30.sp)
-            }
         }
     }
-}
-
-
-
-@Preview
-@Composable
-fun DisplayThing() {
-    RegisterScreen()
 }
