@@ -216,9 +216,6 @@ fun LoginScreen(context : ComponentActivity) {
 //                    navigate.putExtra("password", password)
 //                    // send the values of email and password the user entered to the login activity.
 //
-//                    // I chose to keep this registration system simple because this assignment is only
-//                    // a simple exercise. This is not secure, but this basic logic works for my requirements
-//                    // in simulating a registration/login function.
 //
 //                    startActivity(navigate) // launch the next activity.
                     }
