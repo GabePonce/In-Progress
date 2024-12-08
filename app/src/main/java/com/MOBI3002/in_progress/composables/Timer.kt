@@ -14,8 +14,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun Timer(){
-    var timeLeft by remember { mutableStateOf(60) }
-    var isPaused by remember { mutableStateOf(false) }
+    var timeLeft by remember { mutableStateOf(0) }
+    var isPaused by remember { mutableStateOf(true) }
 
     LaunchedEffect (key1 = timeLeft) {
         while (timeLeft > 0) {
@@ -27,11 +27,11 @@ fun Timer(){
 
 
     fun resetTimer() {
-        timeLeft = 60
+        timeLeft = 0
         isPaused = false
     }
 
-    Column {
+    Column (){
         Text(text = "Time left: $timeLeft")
         Button(onClick = { isPaused = !isPaused }) {
             Text(text = if (isPaused) "Resume" else "Pause")
