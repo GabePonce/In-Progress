@@ -66,7 +66,7 @@ fun AddTask(dbHelper: DBHelper, user: Users?) {
     Column(
         Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()) // Make the entire column scrollable
+            .verticalScroll(rememberScrollState())
     ) {
         Column {
             Row(
@@ -74,7 +74,7 @@ fun AddTask(dbHelper: DBHelper, user: Users?) {
                     .fillMaxWidth()
                     .background(Color(74, 170, 255)), // Blue background color
             ) {
-                Text(
+                Text( // Header section
                     text = "In-Progress",
                     Modifier.padding(80.dp, 10.dp, 0.dp, 10.dp),
                     fontSize = 35.sp,
@@ -97,7 +97,6 @@ fun AddTask(dbHelper: DBHelper, user: Users?) {
                 .fillMaxSize()
                 .background(Color(240, 240, 240))
                 .paint(
-                    // Replace with your image id
                     painterResource(id = R.drawable.duck_logo),
                     contentScale = ContentScale.None
                 )
@@ -125,14 +124,16 @@ fun AddTask(dbHelper: DBHelper, user: Users?) {
                 fontFamily = FontFamily.Default
             )
 
-            DatePicker(state = datePickerState, modifier = Modifier.padding(16.dp))
+            DatePicker(state = datePickerState, modifier = Modifier.padding(16.dp)) // here the user sets the due date either by clicking on a day on the calendar
 
             val selectedDate = remember(datePickerState.selectedDateMillis) {
                 datePickerState.selectedDateMillis?.let { millis ->
-                    val adjustedMillis = millis + (24 * 60 * 60 * 1000) //adjusting for weird one day behind thing
+                    val adjustedMillis = millis + (24 * 60 * 60 * 1000) //adjusted for weird one day behind by adding a day
                     val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.CANADA)
                     sdf.timeZone = TimeZone.getDefault()
-                    sdf.format(Date(adjustedMillis))
+                    sdf.format(Date(adjustedMillis))//formats the date into yyyy-MM-dd
+                                                        // this will allow for proper comparing of
+                                                        // dates in the calendar section
                 } ?: "No date selected"
             }
             taskDate = selectedDate
@@ -148,7 +149,7 @@ fun AddTask(dbHelper: DBHelper, user: Users?) {
                 fontFamily = FontFamily.Default
             )
 
-            TextField(
+            TextField( //takes in the task description
                 modifier = Modifier
                     .width(400.dp)
                     .height(150.dp)
@@ -156,7 +157,7 @@ fun AddTask(dbHelper: DBHelper, user: Users?) {
                 value = description,
                 onValueChange = {
                     description = it
-                    descriptionError =
+                    descriptionError = // to make sure that a description is put that is required
                         if (description.isEmpty()) "Please enter your task." else ""
                 },
                 label = { Text(text = "description", fontSize = 25.sp) }
@@ -171,21 +172,23 @@ fun AddTask(dbHelper: DBHelper, user: Users?) {
 
             Spacer(modifier = Modifier.height(15.dp))
 
-            Button(
+            Button( // create task button
                 onClick = {
-                    val valid = descriptionError.isEmpty()
+                    val valid = descriptionError.isEmpty()  // checks for no errors
 
                     if (valid) {
                         if (user != null && taskDate != "No date selected") {
-                            dbHelper.insertTask(description, taskDate, user.userId)
+                            //checks that the user being passed in as an argument is an actual user
+                            // and checks to see if task date is left empty
+                            dbHelper.insertTask(description, taskDate, user.userId) // task with duedate
                             success = "Successfully added task"
                         } else if (user != null)  {
-                            dbHelper.insertTask(description, null, user.userId)
-                            success = "Successfully added task"
+                            dbHelper.insertTask(description, null, user.userId) // task without duedate
+                            success = "Successfully added task" // success message
                         }
 
                     }else {
-                        success = "Something went wrong"
+                        success = "Something went wrong" // failure message
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(74, 170, 255)),
@@ -196,7 +199,8 @@ fun AddTask(dbHelper: DBHelper, user: Users?) {
                 Text(text = "Add Task", fontSize = 25.sp)
             }
             Text(text = success)
-            Spacer(modifier = Modifier.height(80.dp))
+            Spacer(modifier = Modifier.height(80.dp)) // spacer so that the button and success message
+                                                      // dont blend into the floor
         }
     }
 }
