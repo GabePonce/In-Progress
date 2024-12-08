@@ -1,26 +1,24 @@
 package com.MOBI3002.in_progress.composables
 
-import android.icu.text.SimpleDateFormat
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,20 +37,33 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.MOBI3002.in_progress.R
-import java.util.Date
-import java.util.Locale
+import com.MOBI3002.in_progress.classes.Task
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun Calendar(){
 
-    var description by remember { mutableStateOf("") }
+    // Make a list of all tasks that have due dates.
+    var dueTasks by remember { mutableStateOf(mutableListOf<Task>()) }
+    while (dueTasks.size < 10) { // Change this to loop for the number of due tasks rather than six times.
+        dueTasks = (dueTasks + Task (
+            taskId = 0, // This parameter doesn't really matter
+            userId = 0, // This parameter doesn't really matter
+            taskDesc = "DESCRIPTION",
+            taskDueDate = "DUE DATE"
+        )).toMutableList()
+    }
 
-    var descriptionError by remember { mutableStateOf(" ") }
-
-    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = 1733862949398)
-
-    var taskDate by remember { mutableStateOf("") }
+    // Make a list of all tasks that have a due date that is within X amount of time from current day.
+    var upcomingTasks by remember { mutableStateOf(mutableListOf<Task>()) }
+    while (upcomingTasks.size < 10) {
+        upcomingTasks = (upcomingTasks + Task (
+            taskId = 0, // This parameter doesn't really matter
+            userId = 0, // This parameter doesn't really matter
+            taskDesc = "DESCRIPTION",
+            taskDueDate = "UPCOMING DATE"
+        )).toMutableList()
+    }
 
     Column(
         Modifier
@@ -92,71 +103,153 @@ fun Calendar(){
                     painterResource(id = R.drawable.duck_logo),
                     contentScale = ContentScale.None
                 )
-                .padding(16.dp)
         ) {
 
-            Text(
-                text = "Add New Task",
-                Modifier
-                    .padding(0.dp, 10.dp, 8.dp, 0.dp)
-                    .align(Alignment.CenterHorizontally),
-                fontSize = 30.sp,
-                color = Color(150, 150, 150),
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Default
-            )
-
-            Spacer(Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(25.dp))
 
             Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                Modifier
+                    .width(400.dp)
+                    .height(300.dp)
+                    .background(Color(74, 170, 255))
             ) {
-                Text(text = "Set Due Date (optional)",
-                    fontSize = 20.sp,
-                    color = Color(150, 150, 150),
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Default)
+                Row {
+                    Image(
+                        modifier = Modifier
+                            .size(65.dp),
+                        painter = painterResource(id = R.drawable.duck_logo),
+                        contentDescription = "DUCK"
+                    )
+                    Text(
+                        text = "Due Tasks",
+                        Modifier
+                            .padding(10.dp),
+                        fontSize = 30.sp,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Default
+                    )
 
-                DatePicker(state = datePickerState, modifier = Modifier.padding(16.dp))
-
-                // Format the date to be in year month day format
-                val selectedDate = remember(datePickerState.selectedDateMillis) {
-                    datePickerState.selectedDateMillis?.let { millis ->
-                        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(millis))
-                    } ?: "No date selected"
                 }
-                taskDate = selectedDate
+
+
+                LazyColumn {
+                    items(dueTasks) { task ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(5.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .border(
+                                        BorderStroke(4.dp, Color(74, 170, 255)),
+                                        shape = RoundedCornerShape(16.dp)
+                                    )
+                                    .background(
+                                        Color(210, 210, 210),
+                                        shape = RoundedCornerShape(16.dp)
+                                    )
+                                    .fillMaxHeight(.12f) // Fill 20% column height // Fill column width
+                                    .width(250.dp)
+                            ) {
+                                Text(
+                                    text = task.taskDesc,
+                                    fontSize = 22.sp,  // Set font size
+                                    fontWeight = FontWeight.Normal,
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxSize()
+                                )
+                            }
+                            task.taskDueDate?.let {
+                                Text(text = it,
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                        .padding(5.dp, 0.dp, 0.dp, 0.dp),
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = FontFamily.Default,
+                                )
+                            }
+                        }
+                    }
+                }
             }
 
-            Text(text = "Set Task Description",
-                fontSize = 20.sp,
-                modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 20.dp),
-                color = Color(150, 150, 150),
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Default)
+            Spacer(modifier = Modifier.height(40.dp))
 
-            TextField(
-                modifier = Modifier
+            Column(
+                Modifier
                     .width(400.dp)
-                    .height(150.dp)
-                    .align(Alignment.CenterHorizontally),
-                value = description,
-                onValueChange = {
-                    description = it
-                    descriptionError = if (description.isEmpty()) "Please enter your task." else ""
-                },
-                label = { Text(text="description", fontSize = 25.sp) }
-            )
-            if (descriptionError.isNotEmpty()) Text(
-                text = descriptionError,
-                color = MaterialTheme.colorScheme.error
-            )
+                    .height(300.dp)
+                    .background(Color(74, 170, 255))
+            ) {
+                Row {
+                    Image(
+                        modifier = Modifier
+                            .size(65.dp),
+                        painter = painterResource(id = R.drawable.duck_logo),
+                        contentDescription = "DUCK"
+                    )
+                    Text(
+                        text = "Upcoming Tasks",
+                        Modifier
+                            .padding(10.dp),
+                        fontSize = 30.sp,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Default
+                    )
+
+                }
 
 
+                LazyColumn {
+                    items(upcomingTasks) { task ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(5.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .border(
+                                        BorderStroke(4.dp, Color(74, 170, 255)),
+                                        shape = RoundedCornerShape(16.dp)
+                                    )
+                                    .background(
+                                        Color(210, 210, 210),
+                                        shape = RoundedCornerShape(16.dp)
+                                    )
+                                    .fillMaxHeight(.12f) // Fill 20% column height // Fill column width
+                                    .width(250.dp)
+                            ) {
+                                Text(
+                                    text = task.taskDesc,
+                                    fontSize = 22.sp,  // Set font size
+                                    fontWeight = FontWeight.Normal,
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxSize()
+                                )
+                            }
+                            task.taskDueDate?.let {
+                                Text(text = it,
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                        .padding(5.dp, 0.dp, 0.dp, 0.dp),
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = FontFamily.Default,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
+
 
 @Preview
 @Composable
